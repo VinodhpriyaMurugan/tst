@@ -189,7 +189,7 @@ export default function IndianOfferLetter({ formData }) {
         onClick={handleDownload}
         style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}
       >
-        Download PDF
+        Download {formData.country === "India" ? "Indian" : "USA"} Offer Letter
       </button>
       <div
         id="page-1"
@@ -242,9 +242,9 @@ export default function IndianOfferLetter({ formData }) {
         </p>
         <ul>
           <li>
-            <strong>Compensation:</strong> Your Annual Compensation will be USD{' '}
-            {formData.annualSalary}/- ( {formData.annualSalaryInWords} Dollars Only) less
-            applicable withholdings.
+            <strong>Compensation:</strong> Your Annual Compensation will be USD{" "}
+            {formData.annualSalary}/- ( {formData.annualSalaryInWords} Dollars
+            Only) less applicable withholdings.
           </li>
           <li>
             <strong>Pay-period schedule:</strong>Our payroll cycle is
@@ -297,7 +297,12 @@ export default function IndianOfferLetter({ formData }) {
           fontFamily: "Arial, sans-serif",
           fontSize: "25px",
           position: "relative",
-          lineHeight: "50px",
+          lineHeight:
+            formData.showBonus && formData.showJoiningBonus
+              ? "50px"
+              : formData.showBonus || formData.showJoiningBonus
+              ? "55px"
+              : "60px",
           textAlign: "justify",
         }}
       >
@@ -336,24 +341,29 @@ export default function IndianOfferLetter({ formData }) {
               withdraw the variable bonus, at its absolute discretion.
             </p>
           </li>
-          <li>
-            <p>
-              <strong>Joining Bonus:</strong> A one-time joining bonus of $
-              {formData.fb}
-              will be granted to you after completing 3 months with the company.
-              However, if you separate from the company within 12 months of
-              joining, the full amount will be recovered from you.
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>Guaranteed Bonus:</strong> In addition to the annual base
-              salary, you shall receive a one-time guaranteed bonus of $
-              {formData.gb}
-              (USD {""}{formData.gbInWords} Dollars) on completion of 12 months of continuous
-              service with TSI.
-            </p>
-          </li>
+          {formData.showBonus && (
+            <li>
+              <p>
+                <strong>Joining Bonus:</strong> A one-time joining bonus of $
+                {formData.fb}
+                will be granted to you after completing 3 months with the
+                company. However, if you separate from the company within 12
+                months of joining, the full amount will be recovered from you.
+              </p>
+            </li>
+          )}
+          {formData.showJoiningBonus && (
+            <li>
+              <p>
+                <strong>Guaranteed Bonus:</strong> In addition to the annual
+                base salary, you shall receive a one-time guaranteed bonus of $
+                {formData.gb}
+                (USD {""}
+                {formData.gbInWords} Dollars) on completion of 12 months of
+                continuous service with TSI.
+              </p>
+            </li>
+          )}
         </ul>
         <h3>At-will Employment:</h3>
         <p>
@@ -424,12 +434,8 @@ export default function IndianOfferLetter({ formData }) {
             style={{
               margin: "10px 0",
               height: "50px",
-              // width: "150px",
-              // borderBottom: "1px solid #000",
-              textAlign: "center",
             }}
           >
-            {/* Dynamic Signature */}
             {formData.signature ? (
               <img
                 src={URL.createObjectURL(formData.signature)}

@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import moment from "moment";
-import headerImage from "./Assets/Header.png"; 
-import footerImage from "./Assets/Footer.png"; 
+import headerImage from "./Assets/Header.png";
+import footerImage from "./Assets/Footer.png";
 import html2canvas from "html2canvas";
 const styles = {
   th: {
@@ -24,175 +24,189 @@ const styles = {
   },
 };
 export default function UsofferLetter({ formData }) {
-     function formatIndianNumberingSystem(number) {
-       return number.toLocaleString(
-         formData.country === "India" ? "en-IN" : "en-US"
-       );
-     }
+  function formatIndianNumberingSystem(number) {
+    return number.toLocaleString(
+      formData.country === "India" ? "en-IN" : "en-US"
+    );
+  }
 
-     formatIndianNumberingSystem(formData.annualSalary);
-   const data = {
-     components: [
-       {
-         name: "Basic",
-         monthly: (formData.employeeBasicPay / 12).toFixed(2),
-         annual: formData.employeeBasicPay,
-       },
-       {
-         name: "HRA",
-         monthly: (formData.hra / 12).toFixed(2),
-         annual: formData.hra,
-       },
-       {
-         name: "Flexible Pay",
-         monthly: (
-           (formData.annualSalary -
-             formData.hra -
-             formData.insurance -
-             formData.gb -
-             formData.fb -
-             formData.pf -
-             formData.employeeBasicPay) /
-           12
-         ).toFixed(2),
-         annual:
-           formData.annualSalary -
-           formData.hra -
-           formData.insurance -
-           formData.gb -
-           formData.fb -
-           formData.pf -
-           formData.employeeBasicPay,
-       },
-     ],
-     totalFixedPay: {
-       monthly: (
-         (formData.hra +
-           formData.employeeBasicPay +
-           (formData.annualSalary -
-             formData.hra -
-             formData.insurance -
-             formData.gb -
-             formData.fb -
-             formData.pf -
-             formData.employeeBasicPay)) /
-         12
-       ).toFixed(2),
-       annual:
-         formData.hra +
-         formData.employeeBasicPay +
-         (formData.annualSalary -
-           formData.hra -
-           formData.insurance -
-           formData.gb -
-           formData.fb -
-           formData.pf -
-           formData.employeeBasicPay),
-     },
-     benefits: [
-       { name: "Employer's PF", monthly: 0, annual: formData.pf },
-       {
-         name: "Insurance Benefit",
-         monthly: 0,
-         annual: formData.insurance,
-       },
-       {
-         name: "Gratuity",
-         monthly: 0,
-         annual: parseInt((formData.employeeBasicPay * 4.81) / 100).toFixed(2),
-       },
-     ],
-     totalBenefits: {
-       monthly: 0,
-       annual: (
-         parseInt(formData.pf) +
-         parseInt(formData.insurance) +
-         parseInt(formData.employeeBasicPay * 4.81)
-       ).toFixed(2),
-       //   formData.pf + formData.insurance
-       // ).toFixed(2),
-     },
-     totalCost: {
-       monthly: 0,
-       annual:
-         formData.hra +
-         formData.employeeBasicPay +
-         (formData.annualSalary -
-           formData.hra -
-           formData.insurance -
-           formData.gb -
-           formData.fb -
-           formData.pf -
-           formData.employeeBasicPay) +
-         parseInt(formData.pf) +
-         parseInt(formData.insurance) +
-         parseInt(formData.employeeBasicPay * 4.81),
-     },
-     GuaranteedBonus: {
-       monthly:
-         parseInt(formData.pf) / 12 +
-         formData.insurance / 12 +
-         (formData.employeeBasicPay * 4.81) / 12,
-       annual:
-         formData.pf + formData.insurance + formData.employeeBasicPay * 4.81,
-     },
-     JoiningBonus: {
-       monthly:
-         formData.pf / 12 +
-         formData.insurance / 12 +
-         (formData.employeeBasicPay * 4.81) / 12,
-       annual:
-         formData.pf + formData.insurance + formData.employeeBasicPay * 4.81,
-     },
-   };
-    const handleDownload = async () => {
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = 210; // A4 width
-      const pageHeight = 297; // A4 height
-      const headerHeight = 30;
-      const footerHeight = 20;
-      const contentHeight = pageHeight - headerHeight - footerHeight;
+  formatIndianNumberingSystem(formData.annualSalary);
+  let totalCost =
+    formData.hra +
+    formData.employeeBasicPay +
+    (formData.annualSalary -
+      formData.hra -
+      formData.insurance -
+      formData.gb -
+      formData.fb -
+      formData.pf -
+      formData.employeeBasicPay) +
+    parseInt(formData.pf) +
+    parseInt(formData.insurance) +
+    parseInt(formData.employeeBasicPay * 4.81) +
+    formData.gb +
+    formData.fb;
+  const data = {
+    components: [
+      {
+        name: "Basic",
+        monthly: (formData.employeeBasicPay / 12).toFixed(0),
+        annual: formData.employeeBasicPay,
+      },
+      {
+        name: "HRA",
+        monthly: (formData.hra / 12).toFixed(0),
+        annual: formData.hra,
+      },
+      {
+        name: "Flexible Pay",
+        monthly: (
+          (formData.annualSalary -
+            formData.hra -
+            formData.insurance -
+            formData.gb -
+            formData.fb -
+            formData.pf -
+            formData.employeeBasicPay) /
+          12
+        ).toFixed(0),
+        annual:
+          formData.annualSalary -
+          formData.hra -
+          formData.insurance -
+          formData.gb -
+          formData.fb -
+          formData.pf -
+          formData.employeeBasicPay,
+      },
+    ],
+    totalFixedPay: {
+      monthly: (
+        (formData.hra +
+          formData.employeeBasicPay +
+          (formData.annualSalary -
+            formData.hra -
+            formData.insurance -
+            formData.gb -
+            formData.fb -
+            formData.pf -
+            formData.employeeBasicPay)) /
+        12
+      ).toFixed(0),
+      annual:
+        formData.hra +
+        formData.employeeBasicPay +
+        (formData.annualSalary -
+          formData.hra -
+          formData.insurance -
+          formData.gb -
+          formData.fb -
+          formData.pf -
+          formData.employeeBasicPay),
+    },
+    benefits: [
+      { name: "Employer's PF", monthly: 0, annual: formData.pf },
+      {
+        name: "Insurance Benefit",
+        monthly: 0,
+        annual: formData.insurance,
+      },
+      {
+        name: "Gratuity",
+        monthly: 0,
+        annual: parseInt((formData.employeeBasicPay * 4.81) / 100).toFixed(0),
+      },
+    ],
+    totalBenefits: {
+      monthly: 0,
+      annual: (
+        parseInt(formData.pf) +
+        parseInt(formData.insurance) +
+        parseInt(formData.employeeBasicPay * 4.81)
+      ).toFixed(0),
+      //   formData.pf + formData.insurance
+      // ).toFixed(2),
+    },
+    totalCost: {
+      monthly: 0,
+      annual:
+        formData.hra +
+          formData.employeeBasicPay +
+          (formData.annualSalary -
+            formData.hra -
+            formData.insurance -
+            formData.gb -
+            formData.fb -
+            formData.pf -
+            formData.employeeBasicPay) +
+          parseInt(formData.pf) +
+          parseInt(formData.insurance) +
+          parseInt(formData.employeeBasicPay * 4.81) +
+          formData.gb +
+          formData.fb || 0,
+    },
 
-      const addPageContent = async (elementId, yOffset = headerHeight) => {
-        const element = document.getElementById(elementId);
+    Bonus: [
+      {
+        name: "Guaranteed Bonus",
+        monthly: 0,
+        annual: formData.gb || 0,
+      },
+      {
+        name: "Joining Bonus",
+        monthly: 0,
+        annual: formData.fb || 0,
+      },
+    ],
+  };
+  const handleDownload = async () => {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = 210; // A4 width
+    const pageHeight = 297; // A4 height
+    const headerHeight = 30;
+    const footerHeight = 20;
+    const contentHeight = pageHeight - headerHeight - footerHeight;
 
-        const canvas = await html2canvas(element, { scale: 1, useCORS: true });
-        const imgData = canvas.toDataURL("image/png");
-        const imgHeight = (canvas.height * pageWidth) / canvas.width;
-        pdf.addImage(headerImage, "PNG", 0, 0, pageWidth, headerHeight);
+    const addPageContent = async (elementId, yOffset = headerHeight) => {
+      const element = document.getElementById(elementId);
 
-        pdf.addImage(
-          imgData,
-          "PNG",
-          0,
-          yOffset,
-          pageWidth,
-          Math.min(contentHeight, imgHeight)
-        );
+      const canvas = await html2canvas(element, { scale: 1, useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+      const imgHeight = (canvas.height * pageWidth) / canvas.width;
+      pdf.addImage(headerImage, "PNG", 0, 0, pageWidth, headerHeight);
 
-        pdf.addImage(
-          footerImage,
-          "PNG",
-          0,
-          pageHeight - footerHeight,
-          pageWidth,
-          footerHeight
-        );
-      };
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        yOffset,
+        pageWidth,
+        Math.min(contentHeight, imgHeight)
+      );
 
-      await addPageContent("page-1");
-
-      pdf.addPage();
-      await addPageContent("page-2");
-      pdf.addPage();
-      await addPageContent("page-3");
-      pdf.addPage();
-      await addPageContent("page-4");
-      pdf.addPage();
-      await addPageContent("page-5");
-
-      pdf.save("pageletter.pdf");
+      pdf.addImage(
+        footerImage,
+        "PNG",
+        0,
+        pageHeight - footerHeight,
+        pageWidth,
+        footerHeight
+      );
     };
+
+    await addPageContent("page-1");
+
+    pdf.addPage();
+    await addPageContent("page-2");
+    pdf.addPage();
+    await addPageContent("page-3");
+    pdf.addPage();
+    await addPageContent("page-4");
+    pdf.addPage();
+    await addPageContent("page-5");
+
+    pdf.save("pageletter.pdf");
+  };
   return (
     <>
       <button
@@ -200,7 +214,7 @@ export default function UsofferLetter({ formData }) {
         onClick={handleDownload}
         style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}
       >
-        Download PDF
+        Download {formData.country === "India" ? "Indian" : "USA"} Offer Letter
       </button>
       <div
         id="page-1"
@@ -298,7 +312,12 @@ export default function UsofferLetter({ formData }) {
           fontFamily: "Arial, sans-serif",
           fontSize: "25px",
           position: "relative",
-          lineHeight: "40px",
+          lineHeight:
+            formData.showBonus && formData.showJoiningBonus
+              ? "50px"
+              : formData.showBonus || formData.showJoiningBonus
+              ? "55px"
+              : "60px",
           textAlign: "justify",
         }}
       >
@@ -410,21 +429,29 @@ export default function UsofferLetter({ formData }) {
           may not be directly connected with the business of the company. Other
           terms and conditions
         </p>
-        <p>
-           During your employment, you will be subject to the service rules,
-          regulations, and policy of the company applicable from time to time.
-        </p>
-        <p>
-           The Company may, at its discretion conduct background checks prior
-          to or after your expected joining date to validate your identity, the
-          address provided by you, your education details, and details of your
-          prior work experience if any, and to conduct any criminal checks. You
-          expressly consent to the Company conducting such background checks.
-          This offer will be cancelled and your employment with the company will
-          be terminated with immediate effect, if any of the information
-          provided by you is found to be false or misleading in the final
-          background check report.
-        </p>
+        <ul>
+          <li>
+            <p>
+              During your employment, you will be subject to the service rules,
+              regulations, and policy of the company applicable from time to
+              time.
+            </p>
+          </li>
+          <li>
+            <p>
+              The Company may, at its discretion conduct background checks prior
+              to or after your expected joining date to validate your identity,
+              the address provided by you, your education details, and details
+              of your prior work experience if any, and to conduct any criminal
+              checks. You expressly consent to the Company conducting such
+              background checks. This offer will be cancelled and your
+              employment with the company will be terminated with immediate
+              effect, if any of the information provided by you is found to be
+              false or misleading in the final background check report.
+            </p>
+          </li>
+        </ul>
+
         <p>We certainly hope that you will be pleased with the foregoing.</p>
         <p>
           If you wish to accept this offer of employment with the Company, you
@@ -609,6 +636,25 @@ export default function UsofferLetter({ formData }) {
               </tr>
 
               {/* Total Cost to Company row */}
+
+              {data.Bonus.map((item) => {
+                if (item.name === "Guaranteed Bonus" && !formData.showBonus)
+                  return null;
+                if (item.name === "Joining Bonus" && !formData.showJoiningBonus)
+                  return null;
+
+                return (
+                  <tr key={item.name}>
+                    <td style={styles.td}>{item.name}</td>
+                    <td style={styles.td}>
+                      {item.monthly !== 0 ? item.monthly : ""}
+                    </td>
+                    <td style={styles.td}>
+                      {item.annual !== 0 ? item.annual : ""}
+                    </td>
+                  </tr>
+                );
+              })}
               <tr style={styles.finalRow}>
                 <td style={styles.td}>Total Cost to the Company (A + B)</td>
                 <td style={styles.td}>
