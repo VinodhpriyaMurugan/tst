@@ -360,14 +360,8 @@ function App() {
   };
   return (
     <div style={{ padding: "20px", maxWidth: "800px" }}>
-      <h1>PDF Generator</h1>
-      <button
-        type="button"
-        onClick={handleDownload}
-        style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}
-      >
-        Download PDF
-      </button>
+      <h1>Offer Letter Generator</h1>
+
       <form>
         {/* First Name */}
         <Grid2 container spacing={3}>
@@ -676,9 +670,9 @@ function App() {
             />
           </Grid2>
         </Grid2>
-        <button type="button" onClick={generateOfferLetter}>
+        {/* <button type="button" onClick={generateOfferLetter}>
           Generate Offer Letter
-        </button>
+        </button> */}
       </form>
 
       {formData.country === "India" && <UsofferLetter formData={formData} />}
