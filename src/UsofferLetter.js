@@ -3,24 +3,38 @@ import moment from "moment";
 import headerImage from "./Assets/Header.png";
 import footerImage from "./Assets/Footer.png";
 import html2canvas from "html2canvas";
+// import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align";
 const styles = {
   th: {
     textAlign: "left",
     padding: "8px",
     border: "1px solid #ddd",
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#002060",
     fontWeight: "bold",
+    color: "white",
   },
   td: {
     textAlign: "left",
     padding: "8px",
     border: "1px solid #ddd",
   },
-  footer: {
-    marginTop: "20px",
+  total: {
+    textAlign: "left",
+    padding: "8px",
+    border: "1px solid #ddd",
+    backgroundColor: "#00b0f0",
+  },
+  subHeader: {
     textAlign: "center",
-    fontSize: "14px",
-    color: "#555",
+    padding: "8px",
+    backgroundColor: "#002060",
+    color: "white",
+  },
+  finalRow: {
+    marginTop: "20px",
+    backgroundColor: "#0070c0",
+    textAlign: "center",
+    color: "white",
   },
 };
 export default function UsofferLetter({ formData }) {
@@ -130,20 +144,20 @@ export default function UsofferLetter({ formData }) {
     totalCost: {
       monthly: 0,
       annual:
-        formData.hra +
-          formData.employeeBasicPay +
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay) +
+        parseInt(formData.hra) +
+          parseInt(formData.employeeBasicPay) +
+          (parseInt(formData.annualSalary) -
+            parseInt(formData.hra) -
+            parseInt(formData.insurance) -
+            parseInt(formData.gb) -
+            parseInt(formData.fb) -
+            parseInt(formData.pf) -
+            parseInt(formData.employeeBasicPay)) +
           parseInt(formData.pf) +
           parseInt(formData.insurance) +
           parseInt(formData.employeeBasicPay * 4.81) +
-          formData.gb +
-          formData.fb || 0,
+          parseInt(formData.gb) +
+          parseInt(formData.fb) || 0,
     },
 
     Bonus: [
@@ -157,6 +171,21 @@ export default function UsofferLetter({ formData }) {
         monthly: 0,
         annual: formData.fb || 0,
       },
+      {
+        name: "Performance Bonus",
+        monthly: 0,
+        annual: formData.fb || 0,
+      },
+      {
+        name: "Incentive",
+        monthly: 0,
+        annual: formData.fb || 0,
+      },
+      {
+        name: "Relocation Allowance",
+        monthly: 0,
+        annual: formData.fb || 0,
+      },
     ],
   };
   const handleDownload = async () => {
@@ -164,7 +193,7 @@ export default function UsofferLetter({ formData }) {
     const pageWidth = 210; // A4 width
     const pageHeight = 297; // A4 height
     const headerHeight = 30;
-    const footerHeight = 20;
+    const footerHeight = 30;
     const contentHeight = pageHeight - headerHeight - footerHeight;
 
     const addPageContent = async (elementId, yOffset = headerHeight) => {
@@ -204,6 +233,8 @@ export default function UsofferLetter({ formData }) {
     await addPageContent("page-4");
     pdf.addPage();
     await addPageContent("page-5");
+    pdf.addPage();
+    await addPageContent("page-6");
 
     pdf.save("pageletter.pdf");
   };
@@ -222,13 +253,13 @@ export default function UsofferLetter({ formData }) {
           width: "350mm",
           minHeight: "297mm",
           padding: "100px",
-          margin: "20px",
+          margin: "10px",
           // border: "1px solid #ddd",
           background: "#fff",
           fontFamily: "Arial, sans-serif",
-          fontSize: "25px",
+          fontSize: "27px",
           position: "relative",
-          lineHeight: "40px",
+          lineHeight: "50px",
           textAlign: "justify",
         }}
       >
@@ -239,7 +270,7 @@ export default function UsofferLetter({ formData }) {
           <p>
             Dear {formData.firstName} {formData.lastName},
           </p>
-          <p>{moment(formData.joiningDate).format("MMMM DD, YYYY")}</p>
+          <p>{moment(new Date()).format("MMMM DD, YYYY")}</p>
         </div>
         <p>
           Based on our discussions, I am pleased to offer you employment with
@@ -279,6 +310,29 @@ export default function UsofferLetter({ formData }) {
           Unit no : 601, Featherlite The Address, Survey No 203/10B, 200ft,
           Road, Zamin Pallavaram, MMRD, Chennai, Tamil Nadu 600044
         </p>
+      </div>
+
+      <div
+        id="page-2"
+        style={{
+          width: "350mm",
+          minHeight: "297mm",
+          padding: "100px",
+          margin: "10px",
+          // border: "1px solid #ddd",
+          background: "#fff",
+          fontFamily: "Arial, sans-serif",
+          fontSize: "27px",
+          position: "relative",
+          lineHeight:
+            formData.showBonus && formData.showJoiningBonus
+              ? "60px"
+              : formData.showBonus || formData.showJoiningBonus
+              ? "55px"
+              : "60px",
+          textAlign: "justify",
+        }}
+      >
         <h3>Compensation and Benefit</h3>
         <h3>Salary</h3>
         <p>
@@ -298,29 +352,6 @@ export default function UsofferLetter({ formData }) {
           Your career and compensation progression will be based on your
           performance and Company policies prevailing at that point of time.
         </p>
-      </div>
-
-      <div
-        id="page-2"
-        style={{
-          width: "350mm",
-          minHeight: "297mm",
-          padding: "100px",
-          margin: "20px",
-          // border: "1px solid #ddd",
-          background: "#fff",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "25px",
-          position: "relative",
-          lineHeight:
-            formData.showBonus && formData.showJoiningBonus
-              ? "50px"
-              : formData.showBonus || formData.showJoiningBonus
-              ? "55px"
-              : "60px",
-          textAlign: "justify",
-        }}
-      >
         {formData.showBonus && (
           <>
             <h3>Guaranteed Bonus and Incentive</h3>
@@ -350,18 +381,63 @@ export default function UsofferLetter({ formData }) {
           on the Company intranet, based on your preferences and income tax
           plans.
         </p>
-        <h3>Probation and Confirmation</h3>
-        <p>
-          You will be on probation for a period of 6 (six) months from the date
-          of joining us. On successful completion of your probation, you will be
-          confirmed as a permanent employee of the company. During this period,
-          either party may terminate this contract by giving forty-five (45)
-          days’ notice in writing or salary in lieu thereof, at the sole
-          discretion of the Company. Within ten (10) days after completion of 6
-          (six) months if you have not received a notification stating otherwise
-          including, without limitation, extension of probation period from HR,
-          your employment is deemed to be confirmed.
-        </p>
+        {!formData.showBonus && !formData.showJoiningBonus && (
+          <>
+            <h3>Probation and Confirmation</h3>
+            <p>
+              You will be on probation for a period of 6 (six) months from the
+              date of joining us. On successful completion of your probation,
+              you will be confirmed as a permanent employee of the company.
+              During this period, either party may terminate this contract by
+              giving forty-five (45) days’ notice in writing or salary in lieu
+              thereof, at the sole discretion of the Company. Within ten (10)
+              days after completion of 6 (six) months if you have not received a
+              notification stating otherwise including, without limitation,
+              extension of probation period from HR, your employment is deemed
+              to be confirmed.
+            </p>
+          </>
+        )}
+      </div>
+      <div
+        id="page-3"
+        style={{
+          width: "350mm",
+          minHeight: "297mm",
+          padding: "100px",
+          margin: "10px",
+          // border: "1px solid #ddd",
+          background: "#fff",
+          fontFamily: "Arial, sans-serif",
+          fontSize: "27px",
+          position: "relative",
+          lineHeight:
+            formData.showBonus && formData.showJoiningBonus
+              ? "60px"
+              : formData.showBonus || formData.showJoiningBonus
+              ? "55px"
+              : "60px",
+          textAlign: "justify",
+        }}
+      >
+        {(formData.showBonus || formData.showJoiningBonus) && (
+          <>
+            <h3>Probation and Confirmation</h3>
+            <p>
+              You will be on probation for a period of 6 (six) months from the
+              date of joining us. On successful completion of your probation,
+              you will be confirmed as a permanent employee of the company.
+              During this period, either party may terminate this contract by
+              giving forty-five (45) days’ notice in writing or salary in lieu
+              thereof, at the sole discretion of the Company. Within ten (10)
+              days after completion of 6 (six) months if you have not received a
+              notification stating otherwise including, without limitation,
+              extension of probation period from HR, your employment is deemed
+              to be confirmed.
+            </p>
+          </>
+        )}
+
         <p>
           After the expiry of the probation period or the extended probation
           period (if the same has been extended) either party is entitled to
@@ -377,14 +453,14 @@ export default function UsofferLetter({ formData }) {
           by TSI India leave policy announced from time to time. Further details
           will be provided to you at the time of joining. Notice period.
         </p>
+        <p>
+          In case of your resignation from the services of the Company, the
+          Company at its sole discretion shall have a right, but not an
+          obligation, to waive off the notice period and in such cases the
+          Company will not be liable to make any payment of salary to the
+          employee in lieu of the waived off notice period.
+        </p>
         <ol>
-          <li>
-            In case of your resignation from the services of the Company, the
-            Company at its sole discretion shall have a right, but not an
-            obligation, to waive off the notice period and in such cases the
-            Company will not be liable to make any payment of salary to the
-            employee in lieu of the waived off notice period.
-          </li>
           <li>
             During notice period, leave will not be permitted except in case of
             medical emergency. Payment in lieu of unserved notice period will be
@@ -405,18 +481,18 @@ export default function UsofferLetter({ formData }) {
         </ol>
       </div>
       <div
-        id="page-3"
+        id="page-4"
         style={{
           width: "350mm",
           minHeight: "297mm",
           padding: "100px",
-          margin: "20px",
+          margin: "10px",
           // border: "1px solid #ddd",
           background: "#fff",
           fontFamily: "Arial, sans-serif",
-          fontSize: "25px",
+          fontSize: "27px",
           position: "relative",
-          lineHeight: "40px",
+          lineHeight: "45px",
           textAlign: "justify",
         }}
       >
@@ -528,7 +604,7 @@ export default function UsofferLetter({ formData }) {
                   height: "50px",
                   width: "150px",
                   // borderBottom: "1px solid #000",
-                  textAlign: "center",
+                  // textAlign: "center",
                 }}
               >
                 {/* Dynamic Signature */}
@@ -556,23 +632,23 @@ export default function UsofferLetter({ formData }) {
         </div>
       </div>
       <div
-        id="page-4"
+        id="page-5"
         style={{
           width: "350mm",
           minHeight: "297mm",
           padding: "100px",
-          margin: "20px",
+          margin: "10px",
           // border: "1px solid #ddd",
           background: "#fff",
           fontFamily: "Arial, sans-serif",
-          fontSize: "25px",
+          fontSize: "27px",
           position: "relative",
-          lineHeight: "40px",
+          lineHeight: "50px",
           textAlign: "justify",
         }}
       >
         <div style={{ margin: "20px", fontFamily: "Arial, sans-serif" }}>
-          <h3>Annexure - 1</h3>
+          <h3 style={{ textAlign: "center" }}>Annexure - 1</h3>
           <table
             style={{
               width: "100%",
@@ -581,7 +657,7 @@ export default function UsofferLetter({ formData }) {
             }}
           >
             <thead>
-              <tr>
+              <tr style={{ backgroundColor: "#002060 !important" }}>
                 <th style={styles.th}>Components</th>
                 <th style={styles.th}>Monthly in INR</th>
                 <th style={styles.th}>Annual in INR</th>
@@ -599,9 +675,9 @@ export default function UsofferLetter({ formData }) {
 
               {/* Total Fixed Pay row */}
               <tr style={styles.highlightRow}>
-                <td style={styles.td}>Total Fixed Pay (A)</td>
-                <td style={styles.td}>{data.totalFixedPay.monthly}</td>
-                <td style={styles.td}>{data.totalFixedPay.annual}</td>
+                <td style={styles.total}>Total Gross Pay (A)</td>
+                <td style={styles.total}>{data.totalFixedPay.monthly}</td>
+                <td style={styles.total}>{data.totalFixedPay.annual}</td>
               </tr>
 
               {/* Statutory Benefit Header */}
@@ -626,15 +702,19 @@ export default function UsofferLetter({ formData }) {
 
               {/* Total Benefits row */}
               <tr style={styles.highlightRow}>
-                <td style={styles.td}>Total Benefits (B)</td>
-                <td style={styles.td}>
+                <td style={styles.total}>Total Benefits (B)</td>
+                <td style={styles.total}>
                   {data.totalBenefits.monthly !== 0
                     ? data.totalBenefits.monthly
                     : ""}
                 </td>
-                <td style={styles.td}>{data.totalBenefits.annual}</td>
+                <td style={styles.total}>{data.totalBenefits.annual}</td>
               </tr>
-
+              <tr>
+                <td style={styles.subHeader} colSpan={3}>
+                  Other Benefits
+                </td>
+              </tr>
               {/* Total Cost to Company row */}
 
               {data.Bonus.map((item) => {
@@ -655,8 +735,17 @@ export default function UsofferLetter({ formData }) {
                   </tr>
                 );
               })}
+              <tr style={styles.highlightRow}>
+                <td style={styles.total}>Total Benefits (C)</td>
+                <td style={styles.total}>
+                  {data.totalBenefits.monthly !== 0
+                    ? data.totalBenefits.monthly
+                    : ""}
+                </td>
+                <td style={styles.total}>{data.totalBenefits.annual}</td>
+              </tr>
               <tr style={styles.finalRow}>
-                <td style={styles.td}>Total Cost to the Company (A + B)</td>
+                <td style={styles.td}>Total Cost to the Company (A + B+ C)</td>
                 <td style={styles.td}>
                   {data.totalCost.monthly !== 0 ? data.totalCost.monthly : ""}
                 </td>
@@ -683,18 +772,18 @@ export default function UsofferLetter({ formData }) {
         </div>
       </div>
       <div
-        id="page-5"
+        id="page-6"
         style={{
           width: "350mm",
           minHeight: "297mm",
           padding: "100px",
-          margin: "20px",
+          margin: "10px",
           // border: "1px solid #ddd",
           background: "#fff",
           fontFamily: "Arial, sans-serif",
-          fontSize: "25px",
+          fontSize: "27px",
           position: "relative",
-          lineHeight: "40px",
+          lineHeight: "45px",
           textAlign: "justify",
         }}
       >
