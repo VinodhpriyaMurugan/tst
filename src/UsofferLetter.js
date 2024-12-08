@@ -359,7 +359,7 @@ export default function UsofferLetter({ formData }) {
           Unit no : 601, Featherlite The Address, Survey No 203/10B, 200ft,
           Road, Zamin Pallavaram, MMRD, Chennai, Tamil Nadu 600044
         </p>
-           <h3>Salary</h3>
+        <h3>Salary</h3>
         <p>
           Your Cost to Company shall be Rs.
           {formatIndianNumberingSystem(data.totalCost.annual)} {""}
@@ -367,8 +367,8 @@ export default function UsofferLetter({ formData }) {
           your compensation is attached as annexure I. Your remuneration shall
           be divided into 12 (twelve) equal monthly instalments and will be paid
           to you monthly, by way of a direct credit transfer to your bank
-          account, as appearing in the records of the Company. 
-          </p>
+          account, as appearing in the records of the Company.
+        </p>
       </div>
 
       <div
@@ -395,25 +395,28 @@ export default function UsofferLetter({ formData }) {
         <h3>Compensation and Benefit</h3>
         {/* <h3>Salary</h3> */}
         <p>
-          Your salary and
-          other benefits, if any, shall be subject to the deductions of all
-          Government and local taxes, contribution(s), etc. as required to be
-          made under the prevailing laws of India and shall be further subject.
-          to deductions on account of any unauthorized absence for any period
-          beyond the leave entitlement, damage to any property of the Company
-          and all other matters as governed by the Company&#39;s policy. You
-          will be subjected to Annual Performance Review of the respective year.
-          Your career and compensation progression will be based on your
-          performance and Company policies prevailing at that point of time.
-        </p>
-        <h3>Performance Management and Salary Revision </h3>
-        <p>
-          You will be subjected to the Annual Performance Review of the
+          Your salary and other benefits, if any, shall be subject to the
+          deductions of all Government and local taxes, contribution(s), etc. as
+          required to be made under the prevailing laws of India and shall be
+          further subject. to deductions on account of any unauthorized absence
+          for any period beyond the leave entitlement, damage to any property of
+          the Company and all other matters as governed by the Company&#39;s
+          policy. You will be subjected to Annual Performance Review of the
           respective year. Your career and compensation progression will be
           based on your performance and Company policies prevailing at that
           point of time.
         </p>
-
+        {formData.showPb && (
+          <>
+            <h3>Performance Management and Salary Revision </h3>
+            <p>
+              You will be subjected to the Annual Performance Review of the
+              respective year. Your career and compensation progression will be
+              based on your performance and Company policies prevailing at that
+              point of time.
+            </p>
+          </>
+        )}
         {formData.showBonus && (
           <>
             <h3>Guaranteed Bonus and Incentive</h3>
@@ -671,7 +674,7 @@ export default function UsofferLetter({ formData }) {
                   <img
                     src={URL.createObjectURL(formData.signature)}
                     alt="Signature"
-                    style={{ width: "35vw", height: "100%" }}
+                    style={{ width: "15vw", height: "100%" }}
                   />
                 ) : (
                   <span style={{ color: "#ccc" }}>Signature</span>
@@ -800,6 +803,21 @@ export default function UsofferLetter({ formData }) {
                   return null;
                 if (item.name === "Joining Bonus" && !formData.showJoiningBonus)
                   return null;
+                 if (
+                   item.name === "Performance Bonus" &&
+                   !formData.showPb
+                 )
+                   return null;
+                    if (
+                      item.name === "Incentive" &&
+                      !formData.showIncentive
+                    )
+                      return null;
+                       if (
+                         item.name === "Relocation Allowance" &&
+                         !formData.showRelocation
+                       )
+                         return null;
 
                 return (
                   <tr key={item.name}>

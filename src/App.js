@@ -33,6 +33,9 @@ function App() {
     bonus: 0,
     showBonus: false,
     showJoiningBonus: false,
+    showPb: false,
+    showIncentive: false,
+    showRelocation: false,
     insurance: 0,
     incentive: 0,
     country: "India",
@@ -570,6 +573,7 @@ function App() {
                 name="gb"
                 type="Number"
                 value={formData.gb}
+                disabled={!formData.showBonus}
                 onChange={handleChange}
                 InputLabelProps={{
                   shrink: true,
@@ -584,6 +588,7 @@ function App() {
                 name="fb"
                 type="Number"
                 value={formData.fb}
+                disabled={!formData.showJoiningBonus}
                 onChange={handleChange}
                 InputLabelProps={{
                   shrink: true,
@@ -598,6 +603,7 @@ function App() {
                 name="performanceBonus"
                 type="Number"
                 value={formData.performanceBonus}
+                disabled={!formData.showPb}
                 onChange={handleChange}
                 InputLabelProps={{
                   shrink: true,
@@ -605,12 +611,14 @@ function App() {
                 variant="outlined"
               />
             </Grid2>
+
             <Grid2 item xs={4}>
               <TextField
                 fullWidth
                 label="Reloaction Alowance"
                 name="relocation"
                 type="Number"
+                disabled={!formData.showRelocation}
                 value={formData.relocation}
                 onChange={handleChange}
                 InputLabelProps={{
@@ -626,6 +634,7 @@ function App() {
                 name="incentive"
                 type="Number"
                 value={formData.incentive}
+                disabled={!formData.showIncentive}
                 onChange={handleChange}
                 InputLabelProps={{
                   shrink: true,
@@ -697,6 +706,12 @@ function App() {
                 variant="outlined"
               />
             </Grid2>
+          
+          </Grid2>
+          <Grid2 container mt={2} spacing={2}>
+           
+
+          
             <Grid2 item xs={4}>
               <FormControlLabel
                 control={
@@ -719,6 +734,42 @@ function App() {
                   />
                 }
                 label="Show Joining Bonus"
+              />
+            </Grid2>
+            <Grid2 item xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="showPb"
+                    onChange={handleChange}
+                    checked={formData.showPb}
+                  />
+                }
+                label="Show Performance Bonus"
+              />
+            </Grid2>
+            <Grid2 item xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="showIncentive"
+                    onChange={handleChange}
+                    checked={formData.showIncentive}
+                  />
+                }
+                label="Show Incentive"
+              />
+            </Grid2>
+            <Grid2 item xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="showRelocation"
+                    onChange={handleChange}
+                    checked={formData.showRelocation}
+                  />
+                }
+                label="Show Relocation"
               />
             </Grid2>
           </Grid2>
