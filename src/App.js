@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import headerImage from "./Assets/Header.png"; // Import header image
 import footerImage from "./Assets/Footer.png"; // Import footer image
@@ -14,10 +14,10 @@ function App() {
     firstName: "",
     lastName: "",
     position: "",
-    hra: "",
-    salary: "",
+    hra: 0,
+    salary: 0,
     employeeName: "",
-    employeeBasicPay: "",
+    employeeBasicPay: 0,
     empDesignation: "",
     hrName: "",
     hrDesignation: "",
@@ -34,14 +34,39 @@ function App() {
     showBonus: false,
     showJoiningBonus: false,
     insurance: 0,
+    incentive: 0,
     country: "India",
     gb: 0,
     fb: 0,
+    performanceBonus: 0,
+    relocation: 0,
     pf: 0,
     annualGrossSalary: 0,
     companyLogo: null,
     signature: null,
   });
+  const calculateAnnualGrossSalary = () => {
+    return (
+      formData.annualSalary -
+      formData.insurance -
+      formData.gb -
+      formData.fb -
+      formData.pf
+    );
+  };
+
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      annualGrossSalary: calculateAnnualGrossSalary(),
+    }));
+  }, [
+    formData.annualSalary,
+    formData.insurance,
+    formData.gb,
+    formData.fb,
+    formData.pf,
+  ]);
   const data = {
     components: [
       {
@@ -57,48 +82,54 @@ function App() {
       {
         name: "Flexible Pay",
         monthly: (
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay) /
+          (parseInt(formData.annualSalary) -
+            parseInt(formData.hra) -
+            parseInt(formData.insurance) -
+            parseInt(formData.gb) -
+            parseInt(formData.fb) -
+            parseInt(formData.pf) -
+            parseInt(formData.performanceBonus) -
+            parseInt(formData.incentive) -
+            parseInt(formData.relocation) -
+            parseInt(formData.employeeBasicPay)) /
           12
         ).toFixed(2),
         annual:
-          formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay,
+          parseInt(formData.annualSalary) -
+          parseInt(formData.hra) -
+          parseInt(formData.insurance) -
+          parseInt(formData.gb) -
+          parseInt(formData.fb) -
+          parseInt(formData.pf) -
+          parseInt(formData.performanceBonus) -
+          parseInt(formData.incentive) -
+          parseInt(formData.relocation) -
+          parseInt(formData.employeeBasicPay),
       },
     ],
     totalFixedPay: {
       monthly: (
-        (formData.hra +
-          formData.employeeBasicPay +
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay)) /
-        12
+        parseInt(formData.hra) +
+        parseInt(formData.employeeBasicPay) +
+        (parseInt(formData.annualSalary) -
+          parseInt(formData.hra) -
+          parseInt(formData.insurance) -
+          parseInt(formData.gb) -
+          parseInt(formData.fb) -
+          parseInt(formData.pf) -
+          parseInt(formData.employeeBasicPay)) /
+          12
       ).toFixed(2),
       annual:
-        formData.hra +
-        formData.employeeBasicPay +
-        (formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay),
+        parseInt(formData.hra) +
+        parseInt(formData.employeeBasicPay) +
+        (parseInt(formData.annualSalary) -
+          parseInt(formData.hra) -
+          parseInt(formData.insurance) -
+          parseInt(formData.gb) -
+          parseInt(formData.fb) -
+          parseInt(formData.pf) -
+          parseInt(formData.employeeBasicPay)),
     },
     benefits: [
       { name: "Employer's PF", monthly: 0, annual: formData.pf },
@@ -208,64 +239,126 @@ function App() {
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
     console.log(name, value, type, files, checked);
-   setFormData((prevData) => {
-     let updatedData = {
-       ...prevData,
-       [name]:
-         type === "file"
-           ? files[0]
-           : type === "checkbox"
-           ? name === "country" 
-             ? value 
-             : checked
-           : value,
-     };
+    setFormData((prevData) => {
+      let updatedData = {
+        ...prevData,
+        [name]:
+          type === "file"
+            ? files[0]
+            : type === "checkbox"
+            ? name === "country"
+              ? value
+              : checked
+            : value,
+      };
 
-     let parsedValue = parseInt(value.replace(/,/g, ""), 10);
-     if (name === "gb") {
-       updatedData.gbInWords = numberToText(
-         parsedValue,
-         formData.country === "India" ? "Indian" : "English"
-       );
-     }
-     if (name === "annualSalary") {
-       function formatIndianNumberingSystem(number) {
-         return number.toLocaleString(
-           formData.country === "India" ? "en-IN" : "en-US"
-         );
-       }
+      let parsedValue = parseInt(value.replace(/,/g, ""), 10);
+      if (name === "gb") {
+        updatedData.gbInWords = numberToText(
+          parsedValue,
+          formData.country === "India" ? "Indian" : "English"
+        );
+      }
+      function formatIndianNumberingSystem(number) {
+        return number.toLocaleString(
+          formData.country === "India" ? "en-IN" : "en-US"
+        );
+      }
+      if (name === "annualSalary") {
+        if (!isNaN(parsedValue)) {
+          let formattedNumber = formatIndianNumberingSystem(parsedValue);
 
-       if (!isNaN(parsedValue)) {
-         let formattedNumber = formatIndianNumberingSystem(parsedValue);
+          updatedData.annualSalary = parsedValue;
+          updatedData.formattedAnnualSalary = formattedNumber;
+          // updatedData.annualSalaryInWords = numberToText(
+          //   parsedValue,
+          //   formData.country === "India" ? "Indian" : "English"
+          // );
+        } else {
+          updatedData.annualSalary = "";
+        }
+      }
+      if (
+        name === "annualSalary" ||
+        name === "insurance" ||
+        name === "gb" ||
+        name === "fb" ||
+        name === "pf" ||
+        name === "performanceBonus" ||
+        name === "relocation" ||
+        name === "incentive"
+      ) {
+        console.log("Insidee", name, updatedData.performanceBonus);
+        let gross =
+          parseInt(updatedData.annualSalary) -
+          parseInt(updatedData.insurance) -
+          parseInt(updatedData.gb) -
+          parseInt(updatedData.fb) -
+          parseInt(updatedData.pf) -
+          parseInt(updatedData.performanceBonus) -
+          parseInt(updatedData.relocation) -
+          parseInt(updatedData.incentive);
+        let totalGross =
+          parseInt(updatedData.hra) +
+          parseInt(updatedData.employeeBasicPay) +
+          (parseInt(updatedData.annualSalary) -
+            parseInt(updatedData.hra) -
+            parseInt(updatedData.insurance) -
+            parseInt(updatedData.gb) -
+            parseInt(updatedData.fb) -
+            parseInt(updatedData.pf) -
+             parseInt(updatedData.performanceBonus) -
+          parseInt(updatedData.incentive) -
+          parseInt(updatedData.relocation)-
+            parseInt(updatedData.employeeBasicPay)) +
+          parseInt(updatedData.pf) +
+          parseInt((updatedData.employeeBasicPay * 4.81) / 100) +
+          parseInt(updatedData.insurance) +
+          parseInt(updatedData.gb) +
+          parseInt(updatedData.fb) +
+          parseInt(updatedData.performanceBonus) +
+          parseInt(updatedData.incentive) +
+          parseInt(updatedData.relocation);
+        // let totalGross = gross-parseInt(updatedData.employeeBasicPay)+parseInt(updatedData.hra)
+        updatedData.annualGrossSalary = formatIndianNumberingSystem(totalGross);
+        updatedData.annualSalaryInWords = numberToText(
+          totalGross,
+          formData.country === "India" ? "Indian" : "English"
+        );
+      }
 
-         updatedData.annualSalary = parsedValue;
-         updatedData.formattedAnnualSalary = formattedNumber;
-         updatedData.annualSalaryInWords = numberToText(
-           parsedValue,
-           formData.country === "India" ? "Indian" : "English"
-         );
-       } else {
-         updatedData.annualSalary = "";
-       }
-     }
-     console.log(updatedData);
+      if (
+        [
+          "annualSalary",
+          "insurance",
+          "gb",
+          "fb",
+          "pf",
+          "performanceBonus",
+          "incentive",
+          "relocation",
+        ].includes(name)
+      ) {
+        console.log("name=============>", updatedData.performanceBonus);
+        const annualDeductions =
+          parseFloat(updatedData.insurance || 0) +
+          parseFloat(updatedData.gb || 0) +
+          parseFloat(updatedData.fb || 0) +
+          parseFloat(updatedData.pf || 0) +
+          parseFloat(updatedData.performanceBonus || 0) +
+          parseFloat(updatedData.relocation || 0) +
+          parseFloat(updatedData.incentive || 0);
+        console.log("Annual deductions =====>", annualDeductions);
+        const basicPay =
+          (parseFloat(updatedData.annualSalary || 0) - annualDeductions) * 0.4;
+        const hra = basicPay / 2;
+        console.log("Basic pay", basicPay);
+        updatedData.employeeBasicPay = basicPay;
+        updatedData.hra = hra;
+      }
 
-     if (["annualSalary", "insurance", "gb", "fb", "pf"].includes(name)) {
-       const annualDeductions =
-         parseFloat(updatedData.insurance || 0) +
-         parseFloat(updatedData.gb || 0) +
-         parseFloat(updatedData.fb || 0) +
-         parseFloat(updatedData.pf || 0);
-       const basicPay =
-         (parseFloat(updatedData.annualSalary || 0) - annualDeductions) * 0.4;
-       const hra = basicPay / 2;
-
-       updatedData.employeeBasicPay = basicPay;
-       updatedData.hra = hra;
-     }
-
-     return updatedData;
-   });
+      return updatedData;
+    });
   };
   const generateOfferLetter = () => {
     console.log("Form data submitted:", formData);
@@ -498,6 +591,50 @@ function App() {
                 variant="outlined"
               />
             </Grid2>
+            <Grid2 item xs={4}>
+              <TextField
+                fullWidth
+                label="Performance Bonus"
+                name="performanceBonus"
+                type="Number"
+                value={formData.performanceBonus}
+                onChange={handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid2>
+            <Grid2 item xs={4}>
+              <TextField
+                fullWidth
+                label="Reloaction Alowance"
+                name="relocation"
+                type="Number"
+                value={formData.relocation}
+                onChange={handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid2>
+            <Grid2 item xs={4}>
+              <TextField
+                fullWidth
+                label="Incentive"
+                name="incentive"
+                type="Number"
+                value={formData.incentive}
+                onChange={handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+              />
+            </Grid2>
+          </Grid2>
+          <Grid2 container mt={2} spacing={2}>
             {formData.country === "India" && (
               <>
                 <Grid2 item xs={4}>
@@ -585,7 +722,6 @@ function App() {
               />
             </Grid2>
           </Grid2>
-       
         </form>
       </div>
       {formData.country === "India" && <UsofferLetter formData={formData} />}

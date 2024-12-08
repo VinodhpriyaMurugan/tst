@@ -3,6 +3,8 @@ import moment from "moment";
 import headerImage from "./Assets/Header.png";
 import footerImage from "./Assets/Footer.png";
 import html2canvas from "html2canvas";
+import { useEffect, useState } from "react";
+import numberToText from "number2text/lib/numberToText";
 // import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align";
 const styles = {
   th: {
@@ -38,13 +40,31 @@ const styles = {
   },
 };
 export default function UsofferLetter({ formData }) {
+  let gross =
+    formData.annualSalary -
+    formData.insurance -
+    formData.gb -
+    formData.fb -
+    formData.pf;
   function formatIndianNumberingSystem(number) {
-    return number.toLocaleString(
-      formData.country === "India" ? "en-IN" : "en-US"
+    console.log("Formattin  number",number)
+    let num = parseInt(number)
+    return num.toLocaleString(formData.country === "India" ? "en-IN" : "en-US");
+  }
+  function convertToWords (parsedValue){
+    return numberToText(
+      parsedValue,
+      formData.country === "India" ? "Indian" : "English"
     );
   }
-
-  formatIndianNumberingSystem(formData.annualSalary);
+ 
+  
+  // useEffect(() => {
+  //   setformData((prevFormData) => ({
+  //     ...prevFormData,
+  //     annualGrossSalary: formatIndianNumberingSystem(gross),
+  //   }));
+  // }, [gross]);
   let totalCost =
     formData.hra +
     formData.employeeBasicPay +
@@ -60,6 +80,7 @@ export default function UsofferLetter({ formData }) {
     parseInt(formData.employeeBasicPay * 4.81) +
     formData.gb +
     formData.fb;
+   
   const data = {
     components: [
       {
@@ -75,48 +96,60 @@ export default function UsofferLetter({ formData }) {
       {
         name: "Flexible Pay",
         monthly: (
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay) /
+          (parseInt(formData.annualSalary) -
+            parseInt(formData.hra) -
+            parseInt(formData.insurance) -
+            parseInt(formData.gb) -
+            parseInt(formData.fb) -
+            parseInt(formData.pf) -
+            parseInt(formData.performanceBonus) -
+            parseInt(formData.incentive) -
+            parseInt(formData.relocation) -
+            parseInt(formData.employeeBasicPay)) /
           12
-        ).toFixed(0),
+        ).toFixed(2),
         annual:
-          formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay,
+          parseInt(formData.annualSalary) -
+          parseInt(formData.hra) -
+          parseInt(formData.insurance) -
+          parseInt(formData.gb) -
+          parseInt(formData.fb) -
+          parseInt(formData.pf) -
+          parseInt(formData.performanceBonus) -
+          parseInt(formData.incentive) -
+          parseInt(formData.relocation) -
+          parseInt(formData.employeeBasicPay),
       },
     ],
     totalFixedPay: {
       monthly: (
-        (formData.hra +
-          formData.employeeBasicPay +
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay)) /
-        12
-      ).toFixed(0),
+        parseInt(formData.hra) +
+        parseInt(formData.employeeBasicPay) +
+        (parseInt(formData.annualSalary) -
+          parseInt(formData.hra) -
+          parseInt(formData.insurance) -
+          parseInt(formData.gb) -
+          parseInt(formData.fb) -
+          parseInt(formData.pf) -
+          parseInt(formData.performanceBonus) -
+          parseInt(formData.incentive) -
+          parseInt(formData.relocation) -
+          parseInt(formData.employeeBasicPay)) /
+          12
+      ).toFixed(2),
       annual:
-        formData.hra +
-        formData.employeeBasicPay +
-        (formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay),
+        parseInt(formData.hra) +
+        parseInt(formData.employeeBasicPay) +
+        (parseInt(formData.annualSalary) -
+          parseInt(formData.hra) -
+          parseInt(formData.insurance) -
+          parseInt(formData.gb) -
+          parseInt(formData.fb) -
+          parseInt(formData.pf) -
+          parseInt(formData.performanceBonus) -
+          parseInt(formData.incentive) -
+          parseInt(formData.relocation) -
+          parseInt(formData.employeeBasicPay)),
     },
     benefits: [
       { name: "Employer's PF", monthly: 0, annual: formData.pf },
@@ -136,10 +169,8 @@ export default function UsofferLetter({ formData }) {
       annual: (
         parseInt(formData.pf) +
         parseInt(formData.insurance) +
-        parseInt(formData.employeeBasicPay * 4.81)
+        parseInt((formData.employeeBasicPay * 4.81) / 100)
       ).toFixed(0),
-      //   formData.pf + formData.insurance
-      // ).toFixed(2),
     },
     totalCost: {
       monthly: 0,
@@ -152,12 +183,17 @@ export default function UsofferLetter({ formData }) {
             parseInt(formData.gb) -
             parseInt(formData.fb) -
             parseInt(formData.pf) -
+            parseInt(formData.performanceBonus) -
+            parseInt(formData.incentive) -
+            parseInt(formData.relocation) -
             parseInt(formData.employeeBasicPay)) +
           parseInt(formData.pf) +
           parseInt(formData.insurance) +
-          parseInt(formData.employeeBasicPay * 4.81) +
+          parseInt((formData.employeeBasicPay * 4.81) / 100) +
           parseInt(formData.gb) +
-          parseInt(formData.fb) || 0,
+          parseInt(formData.fb)+ parseInt(formData.performanceBonus) +
+            parseInt(formData.incentive) +
+            parseInt(formData.relocation)  || 0,
     },
 
     Bonus: [
@@ -174,20 +210,32 @@ export default function UsofferLetter({ formData }) {
       {
         name: "Performance Bonus",
         monthly: 0,
-        annual: formData.fb || 0,
+        annual: formData.performanceBonus || 0,
       },
       {
         name: "Incentive",
         monthly: 0,
-        annual: formData.fb || 0,
+        annual: 0,
       },
       {
         name: "Relocation Allowance",
         monthly: 0,
-        annual: formData.fb || 0,
+        annual: formData.relocation,
       },
     ],
+    totalBonus: {
+      monthly: 0,
+      annual: (
+        parseInt(formData.fb) +
+        parseInt(formData.performanceBonus) +
+        parseInt(formData.gb) +
+        parseInt(formData.relocation)
+      ).toFixed(0),
+    },
   };
+  
+
+ 
   const handleDownload = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = 210; // A4 width
@@ -336,16 +384,17 @@ export default function UsofferLetter({ formData }) {
         <h3>Compensation and Benefit</h3>
         <h3>Salary</h3>
         <p>
-          Your Cost to Company shall be Rs.{formData.formattedAnnualSalary} {""}
-          {formData.annualSalaryInWords}/- per annum. The break-up of your
-          compensation is attached as annexure I. Your remuneration shall be
-          divided into 12 (twelve) equal monthly instalments and will be paid to
-          you monthly, by way of a direct credit transfer to your bank account,
-          as appearing in the records of the Company. Your salary and other
-          benefits, if any, shall be subject to the deductions of all Government
-          and local taxes, contribution(s), etc. as required to be made under
-          the prevailing laws of India and shall be further subject. to
-          deductions on account of any unauthorized absence for any period
+          Your Cost to Company shall be Rs.
+          {formatIndianNumberingSystem(data.totalCost.annual)} {""}
+          {convertToWords(data.totalCost.annual)}/- per annum. The break-up of
+          your compensation is attached as annexure I. Your remuneration shall
+          be divided into 12 (twelve) equal monthly instalments and will be paid
+          to you monthly, by way of a direct credit transfer to your bank
+          account, as appearing in the records of the Company. Your salary and
+          other benefits, if any, shall be subject to the deductions of all
+          Government and local taxes, contribution(s), etc. as required to be
+          made under the prevailing laws of India and shall be further subject.
+          to deductions on account of any unauthorized absence for any period
           beyond the leave entitlement, damage to any property of the Company
           and all other matters as governed by the Company&#39;s policy. You
           will be subjected to Annual Performance Review of the respective year.
@@ -601,8 +650,8 @@ export default function UsofferLetter({ formData }) {
               <div
                 style={{
                   margin: "10px 0",
-                  height: "50px",
-                  width: "150px",
+                  height: "60px",
+                  width: "260px",
                   // borderBottom: "1px solid #000",
                   // textAlign: "center",
                 }}
@@ -668,16 +717,16 @@ export default function UsofferLetter({ formData }) {
               {data.components.map((item) => (
                 <tr key={item.name}>
                   <td style={styles.td}>{item.name}</td>
-                  <td style={styles.td}>{item.monthly}</td>
-                  <td style={styles.td}>{item.annual}</td>
+                  <td style={styles.td}>{formatIndianNumberingSystem(item.monthly)}</td>
+                  <td style={styles.td}>{formatIndianNumberingSystem(item.annual)}</td>
                 </tr>
               ))}
 
               {/* Total Fixed Pay row */}
               <tr style={styles.highlightRow}>
                 <td style={styles.total}>Total Gross Pay (A)</td>
-                <td style={styles.total}>{data.totalFixedPay.monthly}</td>
-                <td style={styles.total}>{data.totalFixedPay.annual}</td>
+                <td style={styles.total}>{formatIndianNumberingSystem(data.totalFixedPay.monthly)}</td>
+                <td style={styles.total}>{formatIndianNumberingSystem(data.totalFixedPay.annual)}</td>
               </tr>
 
               {/* Statutory Benefit Header */}
@@ -692,10 +741,10 @@ export default function UsofferLetter({ formData }) {
                 <tr key={item.name}>
                   <td style={styles.td}>{item.name}</td>
                   <td style={styles.td}>
-                    {item.monthly !== 0 ? item.monthly : ""}
+                    {item.monthly !== 0 ? formatIndianNumberingSystem(item.monthly) : ""}
                   </td>
                   <td style={styles.td}>
-                    {item.annual !== 0 ? item.annual : ""}
+                    {item.annual !== 0 ? formatIndianNumberingSystem(item.annual) : ""}
                   </td>
                 </tr>
               ))}
@@ -705,10 +754,10 @@ export default function UsofferLetter({ formData }) {
                 <td style={styles.total}>Total Benefits (B)</td>
                 <td style={styles.total}>
                   {data.totalBenefits.monthly !== 0
-                    ? data.totalBenefits.monthly
+                    ? formatIndianNumberingSystem(data.totalBenefits.monthly)
                     : ""}
                 </td>
-                <td style={styles.total}>{data.totalBenefits.annual}</td>
+                <td style={styles.total}>{formatIndianNumberingSystem(data.totalBenefits.annual)}</td>
               </tr>
               <tr>
                 <td style={styles.subHeader} colSpan={3}>
@@ -727,10 +776,10 @@ export default function UsofferLetter({ formData }) {
                   <tr key={item.name}>
                     <td style={styles.td}>{item.name}</td>
                     <td style={styles.td}>
-                      {item.monthly !== 0 ? item.monthly : ""}
+                      {item.monthly !== 0 ? formatIndianNumberingSystem(item.monthly) : ""}
                     </td>
                     <td style={styles.td}>
-                      {item.annual !== 0 ? item.annual : ""}
+                      {item.annual !== 0 ? formatIndianNumberingSystem(item.annual) : ""}
                     </td>
                   </tr>
                 );
@@ -738,18 +787,16 @@ export default function UsofferLetter({ formData }) {
               <tr style={styles.highlightRow}>
                 <td style={styles.total}>Total Benefits (C)</td>
                 <td style={styles.total}>
-                  {data.totalBenefits.monthly !== 0
-                    ? data.totalBenefits.monthly
-                    : ""}
+                  {data.totalBonus.monthly !== 0 ? formatIndianNumberingSystem(data.totalBonus.monthly) : ""}
                 </td>
-                <td style={styles.total}>{data.totalBenefits.annual}</td>
+                <td style={styles.total}>{formatIndianNumberingSystem(data.totalBonus.annual)}</td>
               </tr>
               <tr style={styles.finalRow}>
                 <td style={styles.td}>Total Cost to the Company (A + B+ C)</td>
                 <td style={styles.td}>
-                  {data.totalCost.monthly !== 0 ? data.totalCost.monthly : ""}
+                  {data.totalCost.monthly !== 0 ? formatIndianNumberingSystem(data.totalCost.monthly) : ""}
                 </td>
-                <td style={styles.td}>{data.totalCost.annual}</td>
+                <td style={styles.td}>{formatIndianNumberingSystem(data.totalCost.annual)}</td>
               </tr>
             </tbody>
           </table>
