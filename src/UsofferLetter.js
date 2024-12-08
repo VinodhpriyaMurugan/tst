@@ -5,6 +5,7 @@ import footerImage from "./Assets/Footer.png";
 import html2canvas from "html2canvas";
 import { useEffect, useState } from "react";
 import numberToText from "number2text/lib/numberToText";
+import seal from "./Assets/seal.png"
 // import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align";
 const styles = {
   th: {
@@ -123,8 +124,8 @@ export default function UsofferLetter({ formData }) {
     ],
     totalFixedPay: {
       monthly: (
-        parseInt(formData.hra) +
-        parseInt(formData.employeeBasicPay) +
+        parseInt(formData.hra)/12 +
+        parseInt(formData.employeeBasicPay)/12 +
         (parseInt(formData.annualSalary) -
           parseInt(formData.hra) -
           parseInt(formData.insurance) -
@@ -358,6 +359,16 @@ export default function UsofferLetter({ formData }) {
           Unit no : 601, Featherlite The Address, Survey No 203/10B, 200ft,
           Road, Zamin Pallavaram, MMRD, Chennai, Tamil Nadu 600044
         </p>
+           <h3>Salary</h3>
+        <p>
+          Your Cost to Company shall be Rs.
+          {formatIndianNumberingSystem(data.totalCost.annual)} {""}
+          {convertToWords(data.totalCost.annual)}/- per annum. The break-up of
+          your compensation is attached as annexure I. Your remuneration shall
+          be divided into 12 (twelve) equal monthly instalments and will be paid
+          to you monthly, by way of a direct credit transfer to your bank
+          account, as appearing in the records of the Company. 
+          </p>
       </div>
 
       <div
@@ -382,15 +393,9 @@ export default function UsofferLetter({ formData }) {
         }}
       >
         <h3>Compensation and Benefit</h3>
-        <h3>Salary</h3>
+        {/* <h3>Salary</h3> */}
         <p>
-          Your Cost to Company shall be Rs.
-          {formatIndianNumberingSystem(data.totalCost.annual)} {""}
-          {convertToWords(data.totalCost.annual)}/- per annum. The break-up of
-          your compensation is attached as annexure I. Your remuneration shall
-          be divided into 12 (twelve) equal monthly instalments and will be paid
-          to you monthly, by way of a direct credit transfer to your bank
-          account, as appearing in the records of the Company. Your salary and
+          Your salary and
           other benefits, if any, shall be subject to the deductions of all
           Government and local taxes, contribution(s), etc. as required to be
           made under the prevailing laws of India and shall be further subject.
@@ -401,6 +406,14 @@ export default function UsofferLetter({ formData }) {
           Your career and compensation progression will be based on your
           performance and Company policies prevailing at that point of time.
         </p>
+        <h3>Performance Management and Salary Revision </h3>
+        <p>
+          You will be subjected to the Annual Performance Review of the
+          respective year. Your career and compensation progression will be
+          based on your performance and Company policies prevailing at that
+          point of time.
+        </p>
+
         {formData.showBonus && (
           <>
             <h3>Guaranteed Bonus and Incentive</h3>
@@ -415,13 +428,12 @@ export default function UsofferLetter({ formData }) {
           <>
             <h3> Joining bonus</h3>
             <p>
-              INR {formData.bonus}The amount will be recoverable from you in
-              full, in the unlikely event of separation within 24 months of
-              joining.
+              INR {formatIndianNumberingSystem(formData.fb)} The amount will be
+              recoverable from you in full, in the unlikely event of separation
+              within 24 months of joining.
             </p>
           </>
         )}
-
         <h3>Flexible benefit plan (FBP)</h3>
         <p>
           The Flexible benefit plan will be paid to you as part of your salary
@@ -464,8 +476,8 @@ export default function UsofferLetter({ formData }) {
             formData.showBonus && formData.showJoiningBonus
               ? "60px"
               : formData.showBonus || formData.showJoiningBonus
-              ? "55px"
-              : "60px",
+              ? "50px"
+              : "55px",
           textAlign: "justify",
         }}
       >
@@ -649,11 +661,9 @@ export default function UsofferLetter({ formData }) {
             <div style={{ textAlign: "right" }}>
               <div
                 style={{
-                  margin: "10px 0",
+                  margin: "auto",
                   height: "60px",
                   width: "260px",
-                  // borderBottom: "1px solid #000",
-                  // textAlign: "center",
                 }}
               >
                 {/* Dynamic Signature */}
@@ -661,7 +671,7 @@ export default function UsofferLetter({ formData }) {
                   <img
                     src={URL.createObjectURL(formData.signature)}
                     alt="Signature"
-                    style={{ maxHeight: "100%", maxWidth: "100%" }}
+                    style={{ width: "35vw", height: "100%" }}
                   />
                 ) : (
                   <span style={{ color: "#ccc" }}>Signature</span>
@@ -676,6 +686,11 @@ export default function UsofferLetter({ formData }) {
                 <strong>Date:</strong>{" "}
                 <span>{moment(new Date()).format("MMMM DD, YYYY")}</span>
               </p>
+              <img
+                src={seal}
+                alt="Signature"
+                style={{ maxHeight: "100%", maxWidth: "100%" }}
+              />
             </div>
           </div>
         </div>
@@ -717,16 +732,24 @@ export default function UsofferLetter({ formData }) {
               {data.components.map((item) => (
                 <tr key={item.name}>
                   <td style={styles.td}>{item.name}</td>
-                  <td style={styles.td}>{formatIndianNumberingSystem(item.monthly)}</td>
-                  <td style={styles.td}>{formatIndianNumberingSystem(item.annual)}</td>
+                  <td style={styles.td}>
+                    {formatIndianNumberingSystem(item.monthly)}
+                  </td>
+                  <td style={styles.td}>
+                    {formatIndianNumberingSystem(item.annual)}
+                  </td>
                 </tr>
               ))}
 
               {/* Total Fixed Pay row */}
               <tr style={styles.highlightRow}>
                 <td style={styles.total}>Total Gross Pay (A)</td>
-                <td style={styles.total}>{formatIndianNumberingSystem(data.totalFixedPay.monthly)}</td>
-                <td style={styles.total}>{formatIndianNumberingSystem(data.totalFixedPay.annual)}</td>
+                <td style={styles.total}>
+                  {formatIndianNumberingSystem(data.totalFixedPay.monthly)}
+                </td>
+                <td style={styles.total}>
+                  {formatIndianNumberingSystem(data.totalFixedPay.annual)}
+                </td>
               </tr>
 
               {/* Statutory Benefit Header */}
@@ -741,10 +764,14 @@ export default function UsofferLetter({ formData }) {
                 <tr key={item.name}>
                   <td style={styles.td}>{item.name}</td>
                   <td style={styles.td}>
-                    {item.monthly !== 0 ? formatIndianNumberingSystem(item.monthly) : ""}
+                    {item.monthly !== 0
+                      ? formatIndianNumberingSystem(item.monthly)
+                      : ""}
                   </td>
                   <td style={styles.td}>
-                    {item.annual !== 0 ? formatIndianNumberingSystem(item.annual) : ""}
+                    {item.annual !== 0
+                      ? formatIndianNumberingSystem(item.annual)
+                      : ""}
                   </td>
                 </tr>
               ))}
@@ -757,7 +784,9 @@ export default function UsofferLetter({ formData }) {
                     ? formatIndianNumberingSystem(data.totalBenefits.monthly)
                     : ""}
                 </td>
-                <td style={styles.total}>{formatIndianNumberingSystem(data.totalBenefits.annual)}</td>
+                <td style={styles.total}>
+                  {formatIndianNumberingSystem(data.totalBenefits.annual)}
+                </td>
               </tr>
               <tr>
                 <td style={styles.subHeader} colSpan={3}>
@@ -776,10 +805,14 @@ export default function UsofferLetter({ formData }) {
                   <tr key={item.name}>
                     <td style={styles.td}>{item.name}</td>
                     <td style={styles.td}>
-                      {item.monthly !== 0 ? formatIndianNumberingSystem(item.monthly) : ""}
+                      {item.monthly !== 0
+                        ? formatIndianNumberingSystem(item.monthly)
+                        : ""}
                     </td>
                     <td style={styles.td}>
-                      {item.annual !== 0 ? formatIndianNumberingSystem(item.annual) : ""}
+                      {item.annual !== 0
+                        ? formatIndianNumberingSystem(item.annual)
+                        : ""}
                     </td>
                   </tr>
                 );
@@ -787,16 +820,24 @@ export default function UsofferLetter({ formData }) {
               <tr style={styles.highlightRow}>
                 <td style={styles.total}>Total Benefits (C)</td>
                 <td style={styles.total}>
-                  {data.totalBonus.monthly !== 0 ? formatIndianNumberingSystem(data.totalBonus.monthly) : ""}
+                  {data.totalBonus.monthly !== 0
+                    ? formatIndianNumberingSystem(data.totalBonus.monthly)
+                    : ""}
                 </td>
-                <td style={styles.total}>{formatIndianNumberingSystem(data.totalBonus.annual)}</td>
+                <td style={styles.total}>
+                  {formatIndianNumberingSystem(data.totalBonus.annual)}
+                </td>
               </tr>
               <tr style={styles.finalRow}>
                 <td style={styles.td}>Total Cost to the Company (A + B+ C)</td>
                 <td style={styles.td}>
-                  {data.totalCost.monthly !== 0 ? formatIndianNumberingSystem(data.totalCost.monthly) : ""}
+                  {data.totalCost.monthly !== 0
+                    ? formatIndianNumberingSystem(data.totalCost.monthly)
+                    : ""}
                 </td>
-                <td style={styles.td}>{formatIndianNumberingSystem(data.totalCost.annual)}</td>
+                <td style={styles.td}>
+                  {formatIndianNumberingSystem(data.totalCost.annual)}
+                </td>
               </tr>
             </tbody>
           </table>
