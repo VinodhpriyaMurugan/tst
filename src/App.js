@@ -8,6 +8,7 @@ import { Checkbox, FormControlLabel, Grid2, TextField } from "@mui/material";
 import IndianOfferLetter from "./IndianOfferLetter";
 import UsofferLetter from "./UsofferLetter";
 import numberToText from "number2text";
+import NzOfferLetter from "./NzOfferLetter";
 function App() {
   // const [country, setCountry] = useState("India");
   const [formData, setFormData] = useState({
@@ -402,6 +403,19 @@ function App() {
                 label="USA Offer Letter"
               />
             </Grid2>
+            <Grid2 item xs={4}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="country"
+                    onChange={handleChange}
+                    value="NZ"
+                    checked={formData.country === "NZ"}
+                  />
+                }
+                label="NZ Offer Letter"
+              />
+            </Grid2>
           </Grid2>
 
           <Grid2
@@ -706,12 +720,8 @@ function App() {
                 variant="outlined"
               />
             </Grid2>
-          
           </Grid2>
           <Grid2 container mt={2} spacing={2}>
-           
-
-          
             <Grid2 item xs={4}>
               <FormControlLabel
                 control={
@@ -721,7 +731,7 @@ function App() {
                     checked={formData.showBonus}
                   />
                 }
-                label="Show Bonus"
+                label="Guaranteed Bonus"
               />
             </Grid2>
             <Grid2 item xs={4}>
@@ -733,7 +743,7 @@ function App() {
                     checked={formData.showJoiningBonus}
                   />
                 }
-                label="Show Joining Bonus"
+                label="Joining Bonus"
               />
             </Grid2>
             <Grid2 item xs={4}>
@@ -745,7 +755,7 @@ function App() {
                     checked={formData.showPb}
                   />
                 }
-                label="Show Performance Bonus"
+                label="Performance Bonus"
               />
             </Grid2>
             <Grid2 item xs={4}>
@@ -757,7 +767,7 @@ function App() {
                     checked={formData.showIncentive}
                   />
                 }
-                label="Show Incentive"
+                label="Incentive"
               />
             </Grid2>
             <Grid2 item xs={4}>
@@ -769,7 +779,7 @@ function App() {
                     checked={formData.showRelocation}
                   />
                 }
-                label="Show Relocation"
+                label="Relocation allowance"
               />
             </Grid2>
           </Grid2>
@@ -777,6 +787,7 @@ function App() {
       </div>
       {formData.country === "India" && <UsofferLetter formData={formData} />}
       {formData.country === "USA" && <IndianOfferLetter formData={formData} />}
+      {/* {formData.country === "NZ" && <NzOfferLetter formData={formData} />} */}
       {/* Page 1 Content */}
     </div>
   );

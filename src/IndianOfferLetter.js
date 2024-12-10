@@ -3,6 +3,8 @@ import jsPDF from "jspdf";
 import headerImage from "./Assets/Header.png";
 import footerImage from "./Assets/Footer.png";
 import html2canvas from "html2canvas";
+import seal from "./Assets/seal.png";
+import numberToText from "number2text/lib/numberToText";
 const styles = {
   th: {
     textAlign: "left",
@@ -24,120 +26,161 @@ const styles = {
   },
 };
 export default function IndianOfferLetter({ formData }) {
-  const data = {
-    components: [
-      {
-        name: "Basic",
-        monthly: (formData.employeeBasicPay / 12).toFixed(2),
-        annual: formData.employeeBasicPay,
-      },
-      {
-        name: "HRA",
-        monthly: (formData.hra / 12).toFixed(2),
-        annual: formData.hra,
-      },
-      {
-        name: "Flexible Pay",
+  console.log("Form data submitted:", formData);
+    const data = {
+      components: [
+        {
+          name: "Basic",
+          monthly: (formData.employeeBasicPay / 12).toFixed(0),
+          annual: formData.employeeBasicPay,
+        },
+        {
+          name: "HRA",
+          monthly: (formData.hra / 12).toFixed(0),
+          annual: formData.hra,
+        },
+        {
+          name: "Flexible Pay",
+          monthly: (
+            (parseInt(formData.annualSalary) -
+              parseInt(formData.hra) -
+              parseInt(formData.insurance) -
+              parseInt(formData.gb) -
+              parseInt(formData.fb) -
+              parseInt(formData.pf) -
+              parseInt(formData.performanceBonus) -
+              parseInt(formData.incentive) -
+              parseInt(formData.relocation) -
+              parseInt(formData.employeeBasicPay)) /
+            12
+          ).toFixed(2),
+          annual:
+            parseInt(formData.annualSalary) -
+            parseInt(formData.hra) -
+            parseInt(formData.insurance) -
+            parseInt(formData.gb) -
+            parseInt(formData.fb) -
+            parseInt(formData.pf) -
+            parseInt(formData.performanceBonus) -
+            parseInt(formData.incentive) -
+            parseInt(formData.relocation) -
+            parseInt(formData.employeeBasicPay),
+        },
+      ],
+      totalFixedPay: {
         monthly: (
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay) /
-          12
+          parseInt(formData.hra) / 12 +
+          parseInt(formData.employeeBasicPay) / 12 +
+          (parseInt(formData.annualSalary) -
+            parseInt(formData.hra) -
+            parseInt(formData.insurance) -
+            parseInt(formData.gb) -
+            parseInt(formData.fb) -
+            parseInt(formData.pf) -
+            parseInt(formData.performanceBonus) -
+            parseInt(formData.incentive) -
+            parseInt(formData.relocation) -
+            parseInt(formData.employeeBasicPay)) /
+            12
         ).toFixed(2),
         annual:
-          formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay,
+          parseInt(formData.hra) +
+          parseInt(formData.employeeBasicPay) +
+          (parseInt(formData.annualSalary) -
+            parseInt(formData.hra) -
+            parseInt(formData.insurance) -
+            parseInt(formData.gb) -
+            parseInt(formData.fb) -
+            parseInt(formData.pf) -
+            parseInt(formData.performanceBonus) -
+            parseInt(formData.incentive) -
+            parseInt(formData.relocation) -
+            parseInt(formData.employeeBasicPay)),
       },
-    ],
-    totalFixedPay: {
-      monthly: (
-        (formData.hra +
-          formData.employeeBasicPay +
-          (formData.annualSalary -
-            formData.hra -
-            formData.insurance -
-            formData.gb -
-            formData.fb -
-            formData.pf -
-            formData.employeeBasicPay)) /
-        12
-      ).toFixed(2),
-      annual:
-        formData.hra +
-        formData.employeeBasicPay +
-        (formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay),
-    },
-    benefits: [
-      { name: "Employer's PF", monthly: 0, annual: formData.pf },
-      {
-        name: "Insurance Benefit",
+      benefits: [
+        { name: "Employer's PF", monthly: 0, annual: formData.pf },
+        {
+          name: "Insurance Benefit",
+          monthly: 0,
+          annual: formData.insurance,
+        },
+        {
+          name: "Gratuity",
+          monthly: 0,
+          annual: parseInt((formData.employeeBasicPay * 4.81) / 100).toFixed(0),
+        },
+      ],
+      totalBenefits: {
         monthly: 0,
-        annual: formData.insurance,
+        annual: (
+          parseInt(formData.pf) +
+          parseInt(formData.insurance) +
+          parseInt((formData.employeeBasicPay * 4.81) / 100)
+        ).toFixed(0),
       },
-      {
-        name: "Gratuity",
+      totalCost: {
         monthly: 0,
-        annual: parseInt((formData.employeeBasicPay * 4.81) / 100).toFixed(2),
+        annual:
+          parseInt(formData.hra) +
+            parseInt(formData.employeeBasicPay) +
+            (parseInt(formData.annualSalary) -
+              parseInt(formData.hra) -
+              parseInt(formData.insurance) -
+              parseInt(formData.gb) -
+              parseInt(formData.fb) -
+              parseInt(formData.pf) -
+              parseInt(formData.performanceBonus) -
+              parseInt(formData.incentive) -
+              parseInt(formData.relocation) -
+              parseInt(formData.employeeBasicPay)) +
+            parseInt(formData.pf) +
+            parseInt(formData.insurance) +
+            parseInt((formData.employeeBasicPay * 4.81) / 100) +
+            parseInt(formData.gb) +
+            parseInt(formData.fb) +
+            parseInt(formData.performanceBonus) +
+            parseInt(formData.incentive) +
+            parseInt(formData.relocation) || 0,
       },
-    ],
-    totalBenefits: {
-      monthly: 0,
-      annual: (
-        parseInt(formData.pf) +
-        parseInt(formData.insurance) +
-        parseInt(formData.employeeBasicPay * 4.81)
-      ).toFixed(2),
-      //   formData.pf + formData.insurance
-      // ).toFixed(2),
-    },
-    totalCost: {
-      monthly: 0,
-      annual:
-        formData.hra +
-        formData.employeeBasicPay +
-        (formData.annualSalary -
-          formData.hra -
-          formData.insurance -
-          formData.gb -
-          formData.fb -
-          formData.pf -
-          formData.employeeBasicPay) +
-        parseInt(formData.pf) +
-        parseInt(formData.insurance) +
-        parseInt(formData.employeeBasicPay * 4.81),
-    },
-    GuaranteedBonus: {
-      monthly:
-        parseInt(formData.pf) / 12 +
-        formData.insurance / 12 +
-        (formData.employeeBasicPay * 4.81) / 12,
-      annual:
-        formData.pf + formData.insurance + formData.employeeBasicPay * 4.81,
-    },
-    JoiningBonus: {
-      monthly:
-        formData.pf / 12 +
-        formData.insurance / 12 +
-        (formData.employeeBasicPay * 4.81) / 12,
-      annual:
-        formData.pf + formData.insurance + formData.employeeBasicPay * 4.81,
-    },
-  };
+
+      Bonus: [
+        {
+          name: "Guaranteed Bonus",
+          monthly: 0,
+          annual: formData.gb || 0,
+        },
+        {
+          name: "Joining Bonus",
+          monthly: 0,
+          annual: formData.fb || 0,
+        },
+        {
+          name: "Performance Bonus",
+          monthly: 0,
+          annual: formData.performanceBonus || 0,
+        },
+        {
+          name: "Incentive",
+          monthly: 0,
+          annual: 0,
+        },
+        {
+          name: "Relocation Allowance",
+          monthly: 0,
+          annual: formData.relocation,
+        },
+      ],
+      totalBonus: {
+        monthly: 0,
+        annual: (
+          parseInt(formData.fb) +
+          parseInt(formData.performanceBonus) +
+          parseInt(formData.gb) +
+          parseInt(formData.relocation)
+        ).toFixed(0),
+      },
+    };
+  
   const handleDownload = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = 210; // A4 width
@@ -182,6 +225,19 @@ export default function IndianOfferLetter({ formData }) {
 
     pdf.save("pageletter.pdf");
   };
+  function convertToWords(parsedValue) {
+    return numberToText(
+      parsedValue,
+      formData.country === "India" ? "Indian" : "English"
+    );
+  }
+    function formatIndianNumberingSystem(number) {
+      console.log("Formattin  number", number);
+      let num = parseInt(number);
+      return num.toLocaleString(
+        formData.country === "India" ? "en-IN" : "en-US"
+      );
+    }
   return (
     <>
       <button
@@ -211,7 +267,7 @@ export default function IndianOfferLetter({ formData }) {
             Dear {formData.firstName}
             {formData.lastName},
           </p>
-          <p>{moment(formData.joiningDate).format("MMMM DD, YYYY")}</p>
+          <p>{moment(new Date()).format("MMMM DD, YYYY")}</p>
         </div>
         <p>
           I am pleased to confirm, in writing, our offer of employment with TPF
@@ -243,8 +299,9 @@ export default function IndianOfferLetter({ formData }) {
         <ul>
           <li>
             <strong>Compensation:</strong> Your Annual Compensation will be USD{" "}
-            {formData.annualSalary}/- ( {formData.annualSalaryInWords} Dollars
-            Only) less applicable withholdings.
+            {formatIndianNumberingSystem(formData.annualGrossSalary)}/- ({" "}
+            {convertToWords(formData.annualGrossSalary)} Dollars Only) less
+            applicable withholdings.
           </li>
           <li>
             <strong>Pay-period schedule:</strong>Our payroll cycle is
@@ -430,22 +487,34 @@ export default function IndianOfferLetter({ formData }) {
           look forward to having you onboard.
         </p>
         <div style={{ textAlign: "right" }}>
-          <div
+          {/* <div
             style={{
-              margin: "10px 0",
-              height: "50px",
+              margin: "auto",
+              height: "60px",
+              width: "260px",
             }}
           >
             {formData.signature ? (
               <img
                 src={URL.createObjectURL(formData.signature)}
                 alt="Signature"
-                style={{ maxHeight: "100%", maxWidth: "100%" }}
+                style={{ width: "15vw", height: "10vh" }}
               />
             ) : (
               <span style={{ color: "#ccc" }}>Signature</span>
             )}
-          </div>
+          </div> */}
+          <p style={{ margin: "5px 0" }}>
+            {formData.signature ? (
+              <img
+                src={URL.createObjectURL(formData.signature)}
+                alt="Signature"
+                style={{ width: "15vw", height: "10vh" }}
+              />
+            ) : (
+              <span style={{ color: "#ccc" }}>Signature</span>
+            )}
+          </p>
           <p style={{ margin: "5px 0" }}>
             <strong>
               {" "}
@@ -456,6 +525,11 @@ export default function IndianOfferLetter({ formData }) {
             <strong>Date:</strong>{" "}
             <span>{moment(new Date()).format("MMMM DD, YYYY")}</span>
           </p>
+          <img
+            src={seal}
+            alt="Signature"
+            style={{ maxHeight: "100%", maxWidth: "100%" }}
+          />
         </div>
         <p>
           <strong>Offer Acceptance: </strong>I understand that the Company

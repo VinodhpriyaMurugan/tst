@@ -1,243 +1,48 @@
-import jsPDF from "jspdf";
 import moment from "moment";
+import jsPDF from "jspdf";
 import headerImage from "./Assets/Header.png";
 import footerImage from "./Assets/Footer.png";
 import html2canvas from "html2canvas";
-import { useEffect, useState } from "react";
+import seal from "./Assets/seal.png";
 import numberToText from "number2text/lib/numberToText";
-import seal from "./Assets/seal.png"
-// import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align";
 const styles = {
   th: {
     textAlign: "left",
     padding: "8px",
     border: "1px solid #ddd",
-    backgroundColor: "#002060",
+    backgroundColor: "#f2f2f2",
     fontWeight: "bold",
-    color: "white",
   },
   td: {
     textAlign: "left",
     padding: "8px",
     border: "1px solid #ddd",
   },
-  total: {
-    textAlign: "left",
-    padding: "8px",
-    border: "1px solid #ddd",
-    backgroundColor: "#00b0f0",
-  },
-  subHeader: {
-    textAlign: "center",
-    padding: "8px",
-    backgroundColor: "#002060",
-    color: "white",
-  },
-  finalRow: {
+  footer: {
     marginTop: "20px",
-    backgroundColor: "#0070c0",
     textAlign: "center",
-    color: "white",
+    fontSize: "14px",
+    color: "#555",
   },
 };
-export default function UsofferLetter({ formData }) {
-  let gross =
-    formData.annualSalary -
-    formData.insurance -
-    formData.gb -
-    formData.fb -
-    formData.pf;
+export default function NzOfferLetter({ formData }) {
   function formatIndianNumberingSystem(number) {
-    console.log("Formattin  number",number)
-    let num = parseInt(number)
+    console.log("Formattin  number", number);
+    let num = parseInt(number);
     return num.toLocaleString(formData.country === "India" ? "en-IN" : "en-US");
   }
-  function convertToWords (parsedValue){
+  function convertToWords(parsedValue) {
     return numberToText(
       parsedValue,
       formData.country === "India" ? "Indian" : "English"
     );
   }
- 
-  
- 
-  let totalCost =
-    formData.hra +
-    formData.employeeBasicPay +
-    (formData.annualSalary -
-      formData.hra -
-      formData.insurance -
-      formData.gb -
-      formData.fb -
-      formData.pf -
-      formData.employeeBasicPay) +
-    parseInt(formData.pf) +
-    parseInt(formData.insurance) +
-    parseInt(formData.employeeBasicPay * 4.81) +
-    formData.gb +
-    formData.fb;
-   
-  const data = {
-    components: [
-      {
-        name: "Basic",
-        monthly: (formData.employeeBasicPay / 12).toFixed(0),
-        annual: formData.employeeBasicPay,
-      },
-      {
-        name: "HRA",
-        monthly: (formData.hra / 12).toFixed(0),
-        annual: formData.hra,
-      },
-      {
-        name: "Flexible Pay",
-        monthly: (
-          (parseInt(formData.annualSalary) -
-            parseInt(formData.hra) -
-            parseInt(formData.insurance) -
-            parseInt(formData.gb) -
-            parseInt(formData.fb) -
-            parseInt(formData.pf) -
-            parseInt(formData.performanceBonus) -
-            parseInt(formData.incentive) -
-            parseInt(formData.relocation) -
-            parseInt(formData.employeeBasicPay)) /
-          12
-        ).toFixed(2),
-        annual:
-          parseInt(formData.annualSalary) -
-          parseInt(formData.hra) -
-          parseInt(formData.insurance) -
-          parseInt(formData.gb) -
-          parseInt(formData.fb) -
-          parseInt(formData.pf) -
-          parseInt(formData.performanceBonus) -
-          parseInt(formData.incentive) -
-          parseInt(formData.relocation) -
-          parseInt(formData.employeeBasicPay),
-      },
-    ],
-    totalFixedPay: {
-      monthly: (
-        parseInt(formData.hra)/12 +
-        parseInt(formData.employeeBasicPay)/12 +
-        (parseInt(formData.annualSalary) -
-          parseInt(formData.hra) -
-          parseInt(formData.insurance) -
-          parseInt(formData.gb) -
-          parseInt(formData.fb) -
-          parseInt(formData.pf) -
-          parseInt(formData.performanceBonus) -
-          parseInt(formData.incentive) -
-          parseInt(formData.relocation) -
-          parseInt(formData.employeeBasicPay)) /
-          12
-      ).toFixed(2),
-      annual:
-        parseInt(formData.hra) +
-        parseInt(formData.employeeBasicPay) +
-        (parseInt(formData.annualSalary) -
-          parseInt(formData.hra) -
-          parseInt(formData.insurance) -
-          parseInt(formData.gb) -
-          parseInt(formData.fb) -
-          parseInt(formData.pf) -
-          parseInt(formData.performanceBonus) -
-          parseInt(formData.incentive) -
-          parseInt(formData.relocation) -
-          parseInt(formData.employeeBasicPay)),
-    },
-    benefits: [
-      { name: "Employer's PF", monthly: 0, annual: formData.pf },
-      {
-        name: "Insurance Benefit",
-        monthly: 0,
-        annual: formData.insurance,
-      },
-      {
-        name: "Gratuity",
-        monthly: 0,
-        annual: parseInt((formData.employeeBasicPay * 4.81) / 100).toFixed(0),
-      },
-    ],
-    totalBenefits: {
-      monthly: 0,
-      annual: (
-        parseInt(formData.pf) +
-        parseInt(formData.insurance) +
-        parseInt((formData.employeeBasicPay * 4.81) / 100)
-      ).toFixed(0),
-    },
-    totalCost: {
-      monthly: 0,
-      annual:
-        parseInt(formData.hra) +
-          parseInt(formData.employeeBasicPay) +
-          (parseInt(formData.annualSalary) -
-            parseInt(formData.hra) -
-            parseInt(formData.insurance) -
-            parseInt(formData.gb) -
-            parseInt(formData.fb) -
-            parseInt(formData.pf) -
-            parseInt(formData.performanceBonus) -
-            parseInt(formData.incentive) -
-            parseInt(formData.relocation) -
-            parseInt(formData.employeeBasicPay)) +
-          parseInt(formData.pf) +
-          parseInt(formData.insurance) +
-          parseInt((formData.employeeBasicPay * 4.81) / 100) +
-          parseInt(formData.gb) +
-          parseInt(formData.fb)+ parseInt(formData.performanceBonus) +
-            parseInt(formData.incentive) +
-            parseInt(formData.relocation)  || 0,
-    },
-
-    Bonus: [
-      {
-        name: "Guaranteed Bonus",
-        monthly: 0,
-        annual: formData.gb || 0,
-      },
-      {
-        name: "Joining Bonus",
-        monthly: 0,
-        annual: formData.fb || 0,
-      },
-      {
-        name: "Performance Bonus",
-        monthly: 0,
-        annual: formData.performanceBonus || 0,
-      },
-      {
-        name: "Incentive",
-        monthly: 0,
-        annual: 0,
-      },
-      {
-        name: "Relocation Allowance",
-        monthly: 0,
-        annual: formData.relocation,
-      },
-    ],
-    totalBonus: {
-      monthly: 0,
-      annual: (
-        parseInt(formData.fb) +
-        parseInt(formData.performanceBonus) +
-        parseInt(formData.gb) +
-        parseInt(formData.relocation)
-      ).toFixed(0),
-    },
-  };
-  
-
- 
   const handleDownload = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = 210; // A4 width
     const pageHeight = 297; // A4 height
     const headerHeight = 30;
-    const footerHeight = 30;
+    const footerHeight = 20;
     const contentHeight = pageHeight - headerHeight - footerHeight;
 
     const addPageContent = async (elementId, yOffset = headerHeight) => {
@@ -268,17 +73,11 @@ export default function UsofferLetter({ formData }) {
     };
 
     await addPageContent("page-1");
-
     pdf.addPage();
     await addPageContent("page-2");
     pdf.addPage();
     await addPageContent("page-3");
-    pdf.addPage();
-    await addPageContent("page-4");
-    pdf.addPage();
-    await addPageContent("page-5");
-    pdf.addPage();
-    await addPageContent("page-6");
+    // pdf.addPage();
 
     pdf.save("pageletter.pdf");
   };
@@ -308,61 +107,65 @@ export default function UsofferLetter({ formData }) {
         }}
       >
         <h3 style={{ width: "100%", textAlign: "center" }}>
-          Strictly Private and Confidential
+          Individual Employment Agreement Standard Permanent
         </h3>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <p>
-            Dear {formData.firstName} {formData.lastName},
-          </p>
-          <p>{moment(new Date()).format("MMMM DD, YYYY")}</p>
-        </div>
+        <h3 style={{ width: "100%", textAlign: "center" }}>
+          TSI Software NZ Limited
+        </h3>
+        <h3 style={{ width: "100%", textAlign: "center" }}>
+          {formData.firstName} {formData.lastName}
+        </h3>
+
+        <h3>Introduction</h3>
         <p>
-          Based on our discussions, I am pleased to offer you employment with
-          TPF Software India Private Limited (the “Company”) as set out in the
-          terms detailed below:
-        </p>
-        <h3>Joining Date</h3>
-        <p>
-          Your scheduled date of employment with us will be{" "}
-          {moment(formData.joiningDate).format("MMMM DD, YYYY")} the Company
-          however reserves the right, at its absolute discretion, to extend the
-          date of joining if it considers it necessary. You shall be notified in
-          advance if the date of joining is being extended and the new date of
-          joining will be informed accordingly. In case you do not join the
-          services of the company by{" "}
-          {moment(formData.joiningDate).format("MMMM DD, YYYY")} this offer of
-          appointment will stand cancelled and withdrawn without any further
-          communication. Your appointment stands effective from the date you
-          report in for work, which under no circumstances shall be later than
-          date of joining. Any request for change in date unless communicated
-          and accepted in writing will not be effective.
-        </p>
-        <h3> Position</h3>
-        <p>
-          You will be employed in the full-time position, at 40 hours per week
-        </p>
-        <p>Job Title : {formData.jobTitle}</p>
-        <p>
-          {" "}
-          Reporting To : {formData.reportingManager} -{" "}
-          {formData.reportingManagerJobTitle}
+          Welcome to TSI Software NZ Limited. This agreement contains your terms
+          and conditions of employment. To accept employment with us please sign
+          the agreement and return a copy to us. You are invited to get
+          independent advice before you sign this agreement. This agreement
+          supersedes all prior agreements and understanding, written or oral,
+          between TSI Software NZ Limited and yourself.
         </p>
 
-        <h3>Location</h3>
+        <h3>Parties</h3>
         <p>
-          Head office located at Featherlite, The address,Block A, 6th floor,
-          Unit no : 601, Featherlite The Address, Survey No 203/10B, 200ft,
-          Road, Zamin Pallavaram, MMRD, Chennai, Tamil Nadu 600044
+          TSI Software NZ Limited (We/Us) Office 1016, 21 Queen Street, Zurich
+          Building Level 10, CBD, Auckland 1010, New Zealand.
         </p>
-        <h3>Salary</h3>
+        <h3>Operative provisions</h3>
+        <h3>1 Position and commencement date</h3>
+        <h3>The position</h3>
         <p>
-          Your Cost to Company shall be Rs.
-          {formatIndianNumberingSystem(data.totalCost.annual)} {""}
-          {convertToWords(data.totalCost.annual)}/- per annum. The break-up of
-          your compensation is attached as annexure I. Your remuneration shall
-          be divided into 12 (twelve) equal monthly instalments and will be paid
-          to you monthly, by way of a direct credit transfer to your bank
-          account, as appearing in the records of the Company.
+          <span style={{ marginRight: "20px" }}>1.1</span>
+          We are employing you to work for us as Senior Quality Assurance
+          Engineer at TSI Software NZ Limited. Your role will be based at our
+          Auckland Office.
+        </p>
+        <h3>Reporting</h3>
+        <p>
+          <span style={{ marginRight: "20px" }}>1.2</span>
+          Your reporting line will be discussed with you on commencement of
+          employment.
+        </p>
+        <h3>Change position and duties</h3>
+        <p>
+          <span style={{ marginRight: "20px" }}>1.3</span>
+          You understand the need for us to enhance efficiency and our ability
+          to compete in the marketplace. Our business requires flexibility of
+          work functions in recognition of these needs.
+        </p>
+        <p>
+          <span style={{ marginRight: "20px" }}>1.4</span>
+          The contingencies of our business may, from time to time, require some
+          change to your position and duties. We will consult with you before
+          making any substantive changes to your position and duties.
+        </p>
+        <p>
+          1.5 If significant changes are made to your position, you may request
+          a revised job description.
+        </p>
+        <p>
+          1.6 We will provide training as appropriately where new duties are
+          required.
         </p>
       </div>
 
@@ -387,76 +190,52 @@ export default function UsofferLetter({ formData }) {
           textAlign: "justify",
         }}
       >
-        <h3>Compensation and Benefit</h3>
-        {/* <h3>Salary</h3> */}
+        <h3>Permanent employment</h3>
         <p>
-          Your salary and other benefits, if any, shall be subject to the
-          deductions of all Government and local taxes, contribution(s), etc. as
-          required to be made under the prevailing laws of India and shall be
-          further subject. to deductions on account of any unauthorized absence
-          for any period beyond the leave entitlement, damage to any property of
-          the Company and all other matters as governed by the Company&#39;s
-          policy. You will be subjected to Annual Performance Review of the
-          respective year. Your career and compensation progression will be
-          based on your performance and Company policies prevailing at that
-          point of time.
+          <span style={{ marginRight: "20px" }}> 1.7 </span>
+          Your position is permanent, and we would like you to start work on the
+          commencement date set out in schedule 1.
         </p>
-        {formData.showPb && (
-          <>
-            <h3>Performance Management and Salary Revision </h3>
-            <p>
-              You will be subjected to the Annual Performance Review of the
-              respective year. Your career and compensation progression will be
-              based on your performance and Company policies prevailing at that
-              point of time.
-            </p>
-          </>
-        )}
-        {formData.showBonus && (
-          <>
-            <h3>Guaranteed Bonus and Incentive</h3>
-            <p>
-              Guaranteed Bonuses are eligible to be paid subject to the employee
-              being a full time India employee (and not serving notice period or
-              on probation) at the time of payment.
-            </p>
-          </>
-        )}
-        {formData.showJoiningBonus && (
-          <>
-            <h3> Joining bonus</h3>
-            <p>
-              INR {formatIndianNumberingSystem(formData.fb)} The amount will be
-              recoverable from you in full, in the unlikely event of separation
-              within 24 months of joining.
-            </p>
-          </>
-        )}
-        <h3>Flexible benefit plan (FBP)</h3>
         <p>
-          The Flexible benefit plan will be paid to you as part of your salary
-          every month. You will have the flexibility of choosing the components
-          and amounts under such components as per the options provided to you
-          on the Company intranet, based on your preferences and income tax
-          plans.
+          <span style={{ marginRight: "20px" }}> 1.8 </span>
+          Your employment will continue until it ends under the termination
+          provisions of this agreement.
         </p>
-        {!formData.showBonus && !formData.showJoiningBonus && (
-          <>
-            <h3>Probation and Confirmation</h3>
-            <p>
-              You will be on probation for a period of 6 (six) months from the
-              date of joining us. On successful completion of your probation,
-              you will be confirmed as a permanent employee of the company.
-              During this period, either party may terminate this contract by
-              giving forty-five (45) days’ notice in writing or salary in lieu
-              thereof, at the sole discretion of the Company. Within ten (10)
-              days after completion of 6 (six) months if you have not received a
-              notification stating otherwise including, without limitation,
-              extension of probation period from HR, your employment is deemed
-              to be confirmed.
-            </p>
-          </>
-        )}
+        <p>
+          <span style={{ marginRight: "20px" }}> 1.9 </span>
+          The employment is only valid on the basis of your legal entitlement to
+          work in New Zealand.
+        </p>
+        <p>
+          <span style={{ marginRight: "20px" }}> 1.10 </span>
+          Your employment is subject to the approval of the New Zealand
+          immigration authority’s approval of your Visa transfer, successful
+          business references, and if requested, a copy of your academic
+          transcript.
+        </p>
+        <h3>
+          <span style={{ marginRight: "20px" }}>2</span>Essential term
+        </h3>
+        <p>
+          <span style={{ marginRight: "20px" }}>2.1 </span>
+          It is an essential term of this agreement that:
+          <p style={{ marginRight: "20px" }}>
+            <span style={{ marginRight: "20px" }}>2.1.1</span>any representation
+            or statement you made when applying for this position was true and
+            complete; and
+          </p>
+          <p >
+            <span style={{ marginRight: "20px" }}>2.1.2</span> you disclosed to
+            us every matter which might materially influence our decision to
+            employ you.
+          </p>
+        </p>
+        <p>
+          <span style={{ marginRight: "20px" }}>2.2 </span>
+          If either of these conditions is not met, we may terminate the
+          employment in accordance with the provisions of this agreement dealing
+          with termination for serious misconduct
+        </p>
       </div>
       <div
         id="page-3"
@@ -711,149 +490,6 @@ export default function UsofferLetter({ formData }) {
       >
         <div style={{ margin: "20px", fontFamily: "Arial, sans-serif" }}>
           <h3 style={{ textAlign: "center" }}>Annexure - 1</h3>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              border: "1px solid #ddd",
-            }}
-          >
-            <thead>
-              <tr style={{ backgroundColor: "#002060 !important" }}>
-                <th style={styles.th}>Components</th>
-                <th style={styles.th}>Monthly in INR</th>
-                <th style={styles.th}>Annual in INR</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Basic rows */}
-              {data.components.map((item) => (
-                <tr key={item.name}>
-                  <td style={styles.td}>{item.name}</td>
-                  <td style={styles.td}>
-                    {formatIndianNumberingSystem(item.monthly)}
-                  </td>
-                  <td style={styles.td}>
-                    {formatIndianNumberingSystem(item.annual)}
-                  </td>
-                </tr>
-              ))}
-
-              {/* Total Fixed Pay row */}
-              <tr style={styles.highlightRow}>
-                <td style={styles.total}>Total Gross Pay (A)</td>
-                <td style={styles.total}>
-                  {formatIndianNumberingSystem(data.totalFixedPay.monthly)}
-                </td>
-                <td style={styles.total}>
-                  {formatIndianNumberingSystem(data.totalFixedPay.annual)}
-                </td>
-              </tr>
-
-              {/* Statutory Benefit Header */}
-              <tr>
-                <td style={styles.subHeader} colSpan={3}>
-                  Statutory Benefit
-                </td>
-              </tr>
-
-              {/* Statutory Benefit rows */}
-              {data.benefits.map((item) => (
-                <tr key={item.name}>
-                  <td style={styles.td}>{item.name}</td>
-                  <td style={styles.td}>
-                    {item.monthly !== 0
-                      ? formatIndianNumberingSystem(item.monthly)
-                      : ""}
-                  </td>
-                  <td style={styles.td}>
-                    {item.annual !== 0
-                      ? formatIndianNumberingSystem(item.annual)
-                      : ""}
-                  </td>
-                </tr>
-              ))}
-
-              {/* Total Benefits row */}
-              <tr style={styles.highlightRow}>
-                <td style={styles.total}>Total Benefits (B)</td>
-                <td style={styles.total}>
-                  {data.totalBenefits.monthly !== 0
-                    ? formatIndianNumberingSystem(data.totalBenefits.monthly)
-                    : ""}
-                </td>
-                <td style={styles.total}>
-                  {formatIndianNumberingSystem(data.totalBenefits.annual)}
-                </td>
-              </tr>
-              <tr>
-                <td style={styles.subHeader} colSpan={3}>
-                  Other Benefits
-                </td>
-              </tr>
-              {/* Total Cost to Company row */}
-
-              {data.Bonus.map((item) => {
-                if (item.name === "Guaranteed Bonus" && !formData.showBonus)
-                  return null;
-                if (item.name === "Joining Bonus" && !formData.showJoiningBonus)
-                  return null;
-                 if (
-                   item.name === "Performance Bonus" &&
-                   !formData.showPb
-                 )
-                   return null;
-                    if (
-                      item.name === "Incentive" &&
-                      !formData.showIncentive
-                    )
-                      return null;
-                       if (
-                         item.name === "Relocation Allowance" &&
-                         !formData.showRelocation
-                       )
-                         return null;
-
-                return (
-                  <tr key={item.name}>
-                    <td style={styles.td}>{item.name}</td>
-                    <td style={styles.td}>
-                      {item.monthly !== 0
-                        ? formatIndianNumberingSystem(item.monthly)
-                        : ""}
-                    </td>
-                    <td style={styles.td}>
-                      {item.annual !== 0
-                        ? formatIndianNumberingSystem(item.annual)
-                        : ""}
-                    </td>
-                  </tr>
-                );
-              })}
-              <tr style={styles.highlightRow}>
-                <td style={styles.total}>Total Benefits (C)</td>
-                <td style={styles.total}>
-                  {data.totalBonus.monthly !== 0
-                    ? formatIndianNumberingSystem(data.totalBonus.monthly)
-                    : ""}
-                </td>
-                <td style={styles.total}>
-                  {formatIndianNumberingSystem(data.totalBonus.annual)}
-                </td>
-              </tr>
-              <tr style={styles.finalRow}>
-                <td style={styles.td}>Total Cost to the Company (A + B+ C)</td>
-                <td style={styles.td}>
-                  {data.totalCost.monthly !== 0
-                    ? formatIndianNumberingSystem(data.totalCost.monthly)
-                    : ""}
-                </td>
-                <td style={styles.td}>
-                  {formatIndianNumberingSystem(data.totalCost.annual)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
 
           <h6
             style={{
