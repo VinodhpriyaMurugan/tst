@@ -40,3 +40,8 @@ p {
     transform: rotate(360deg);
   }
 }
+.page-content.download-mode {
+  font-size: 27px; /* Larger font for PDF */
+  line-height: 50px; /* Line height for PDF */
+  padding: 100px; /* Adjust padding */
+}

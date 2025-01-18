@@ -4,7 +4,13 @@ import headerImage from "./Assets/Header.png"; // Import header image
 import footerImage from "./Assets/Footer.png"; // Import footer image
 import html2canvas from "html2canvas";
 import moment from "moment";
-import { Checkbox, FormControlLabel, Grid2, TextField } from "@mui/material";
+import {
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Grid2,
+  TextField,
+} from "@mui/material";
 import IndianOfferLetter from "./IndianOfferLetter";
 import UsofferLetter from "./UsofferLetter";
 import numberToText from "number2text";
@@ -12,6 +18,14 @@ import NzOfferLetter from "./NzOfferLetter";
 function App() {
   // const [country, setCountry] = useState("India");
   const [formData, setFormData] = useState({
+    selectedOption: null,
+    performanceBonusDesc:
+      "You will be subjected to the Annual Performance Review of the respective year. Your career and compensation progression will be based on your performance and Company policies prevailing at that point of time. ",
+    joiningBonusDesc: `The amount will be recoverable from you in full, in the unlikely event of separation within 24 months of joining.`,
+    guaranteedBonusDesc:
+      " Guaranteed Bonuses are eligible to be paid subject to the employee being a full time India employee (and not serving notice period or on probation) at the time of payment.",
+    incentiveDesc: "Incentive description",
+    relocationDesc: "Relocation description",
     firstName: "",
     lastName: "",
     position: "",
@@ -31,6 +45,7 @@ function App() {
     formattedAnnualSalary: 0,
     annualSalaryInWords: "",
     gbInWords: "",
+    fbInWords:'',
     bonus: 0,
     showBonus: false,
     showJoiningBonus: false,
@@ -58,7 +73,37 @@ function App() {
       formData.pf
     );
   };
+  const handleOptionChange = (option) => {
+    setFormData((prevState) => {
+      return {
+        ...prevState,
+        selectedOption: prevState.selectedOption === option ? null : option,
+      };
+    });
+  };
 
+  const handleChangeDesc = (e) => {
+    const { name, value } = e.target;
+    console.log("name & Value", name, value);
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = (field) => {
+    console.log("Description", formData[field]);
+    setFormData((prevData) => {
+      let updatedData = {
+        ...prevData,
+        [field]: formData[field],
+      };
+      console.log("Updated data", updatedData);
+      return updatedData;
+    });
+
+    // alert(`${field} saved: ${formData[field]}`);
+  };
   useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,
@@ -242,6 +287,7 @@ function App() {
   };
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
+
     console.log(name, value, type, files, checked);
     setFormData((prevData) => {
       let updatedData = {
@@ -255,7 +301,52 @@ function App() {
               : checked
             : value,
       };
+      if (
+        [
+          "showBonus",
+          "showJoiningBonus",
+          "showPb",
+          "showIncentive",
+          "showRelocation",
+        ].includes(name) &&
+        type === "checkbox" &&
+        checked === false
+      ) {
+        console.log("Name value", name);
+        switch (name) {
+          case "showBonus":
+            updatedData.employeeBasicPay =
+              parseInt(formData.employeeBasicPay) - parseInt(formData.gb);
+            updatedData.gb = 0;
+            break;
+          case "showJoiningBonus":
+            updatedData.employeeBasicPay =
+              parseInt(formData.employeeBasicPay) - parseInt(formData.fb);
+            updatedData.fb = 0;
+            break;
+          case "showPb":
+            updatedData.employeeBasicPay =
+              parseInt(formData.employeeBasicPay) -
+              parseInt(formData.performanceBonus);
+            updatedData.performanceBonus = 0;
+            break;
+          case "showIncentive":
+            updatedData.employeeBasicPay =
+              parseInt(formData.employeeBasicPay) -
+              parseInt(formData.incentive);
+            updatedData.incentive = 0;
+            break;
+          case "showRelocation":
+            updatedData.employeeBasicPay =
+              parseInt(formData.employeeBasicPay) -
+              parseInt(formData.relocation);
+            updatedData.relocation = 0;
+            break;
+        }
 
+        // updatedData.selectedOption = prevData.selectedOption === name ? null : name;
+        updatedData.selectedOption = checked ? name : null;
+      }
       let parsedValue = parseInt(value.replace(/,/g, ""), 10);
       if (name === "gb") {
         updatedData.gbInWords = numberToText(
@@ -263,6 +354,12 @@ function App() {
           formData.country === "India" ? "Indian" : "English"
         );
       }
+        if (name === "fb") {
+          updatedData.fbInWords = numberToText(
+            parsedValue,
+            formData.country === "India" ? "Indian" : "English"
+          );
+        }
       function formatIndianNumberingSystem(number) {
         return number.toLocaleString(
           formData.country === "India" ? "en-IN" : "en-US"
@@ -311,9 +408,9 @@ function App() {
             parseInt(updatedData.gb) -
             parseInt(updatedData.fb) -
             parseInt(updatedData.pf) -
-             parseInt(updatedData.performanceBonus) -
-          parseInt(updatedData.incentive) -
-          parseInt(updatedData.relocation)-
+            parseInt(updatedData.performanceBonus) -
+            parseInt(updatedData.incentive) -
+            parseInt(updatedData.relocation) -
             parseInt(updatedData.employeeBasicPay)) +
           parseInt(updatedData.pf) +
           parseInt((updatedData.employeeBasicPay * 4.81) / 100) +
@@ -341,6 +438,11 @@ function App() {
           "performanceBonus",
           "incentive",
           "relocation",
+          "showBonus",
+          "showJoiningBonus",
+          "showPb",
+          "showIncentive",
+          "showRelocation",
         ].includes(name)
       ) {
         console.log("name=============>", updatedData.performanceBonus);
@@ -364,430 +466,560 @@ function App() {
       return updatedData;
     });
   };
-  const generateOfferLetter = () => {
-    console.log("Form data submitted:", formData);
-    console.log("Derived data for table:", data);
-    // Add your logic to generate the offer letter here
-  };
+
   return (
-    <div style={{ padding: "20px", maxWidth: "800px" }}>
-      <h1>Offer Letter Generator</h1>
+    <div style={{ padding: "20px", maxWidth: "100vw", display: "flex" }}>
+      <div style={{ width: "20vw" }}>
+        <h1>Offer Letter Generator</h1>
 
-      <div style={{ width: "100vw" }}>
-        <form>
-          {/* First Name */}
-          <Grid2 container spacing={3}>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="country"
-                    onChange={handleChange}
-                    value="India"
-                    checked={formData.country === "India"}
-                  />
-                }
-                label="Indian Offer Letter"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="country"
-                    onChange={handleChange}
-                    value="USA"
-                    checked={formData.country === "USA"}
-                  />
-                }
-                label="USA Offer Letter"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="country"
-                    onChange={handleChange}
-                    value="NZ"
-                    checked={formData.country === "NZ"}
-                  />
-                }
-                label="NZ Offer Letter"
-              />
-            </Grid2>
-          </Grid2>
-
-          <Grid2
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="First Name"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Last Name"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Candidate Designation"
-                name="jobTitle"
-                value={formData.jobTitle}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Date of Joining"
-                name="joiningDate"
-                type="date"
-                value={formData.joiningDate}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Expiry Date"
-                name="expiryDate"
-                type="date"
-                value={formData.expiryDate}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-          </Grid2>
-
-          <Grid2
-            container
-            rowSpacing={1}
-            mt={2}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          >
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Hr Name"
-                name="hrName"
-                value={formData.hrName}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            {/* HR Designation */}
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="HR Designation"
-                name="hrDesignation"
-                value={formData.hrDesignation}
-                onChange={handleChange}
-                variant="outlined"
-              />
+        <div
+          style={{
+            width: "25vw",
+            position: "relative",
+            height: "85vh",
+            overflow: "scroll",
+          }}
+        >
+          <form>
+            {/* First Name */}
+            <Grid2 container spacing={3}>
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="country"
+                      onChange={handleChange}
+                      value="India"
+                      checked={formData.country === "India"}
+                    />
+                  }
+                  label="Indian Offer Letter"
+                />
+              </Grid2>
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="country"
+                      onChange={handleChange}
+                      value="USA"
+                      checked={formData.country === "USA"}
+                    />
+                  }
+                  label="USA Offer Letter"
+                />
+              </Grid2>
+              {/* <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="country"
+                      onChange={handleChange}
+                      value="NZ"
+                      checked={formData.country === "NZ"}
+                    />
+                  }
+                  label="NZ Offer Letter"
+                />
+              </Grid2> */}
             </Grid2>
 
-            {/* Job Title */}
-
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Reporting Manager"
-                name="reportingManager"
-                value={formData.reportingManager}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item size={2}>
-              <TextField
-                fullWidth
-                label="Reporting Manager Deisgnation"
-                name="reportingManagerJobTitle"
-                value={formData.reportingManagerJobTitle}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-          </Grid2>
-          {/* Date of Joining */}
-
-          <Grid2 container mt={2} spacing={2}>
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Annual Salary"
-                name="annualSalary"
-                type="Number"
-                value={formData.annualSalary}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Insurance"
-                name="insurance"
-                type="Number"
-                value={formData.insurance}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="PF"
-                name="pf"
-                type="Number"
-                value={formData.pf}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Guaranteed Bonus"
-                name="gb"
-                type="Number"
-                value={formData.gb}
-                disabled={!formData.showBonus}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Joining Bonus"
-                name="fb"
-                type="Number"
-                value={formData.fb}
-                disabled={!formData.showJoiningBonus}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Performance Bonus"
-                name="performanceBonus"
-                type="Number"
-                value={formData.performanceBonus}
-                disabled={!formData.showPb}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
+            <Grid2
+              container
+              rowSpacing={1}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            >
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="First Name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Last Name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Candidate Designation"
+                  name="jobTitle"
+                  value={formData.jobTitle}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Date of Joining"
+                  name="joiningDate"
+                  type="date"
+                  value={formData.joiningDate}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Expiry Date"
+                  name="expiryDate"
+                  type="date"
+                  value={formData.expiryDate}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
             </Grid2>
 
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Reloaction Alowance"
-                name="relocation"
-                type="Number"
-                disabled={!formData.showRelocation}
-                value={formData.relocation}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Incentive"
-                name="incentive"
-                type="Number"
-                value={formData.incentive}
-                disabled={!formData.showIncentive}
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
-            </Grid2>
-          </Grid2>
-          <Grid2 container mt={2} spacing={2}>
-            {formData.country === "India" && (
-              <>
-                <Grid2 item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="Basic Pay Amount"
-                    name="employeeBasicPay"
-                    type="Number"
-                    value={
-                      (formData.annualSalary -
-                        formData.insurance -
-                        formData.gb -
-                        formData.fb -
-                        formData.pf) *
-                      0.4
-                    }
-                    onChange={handleChange}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                  />
-                </Grid2>
-                <Grid2 item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="HRA"
-                    name="hra"
-                    type="Number"
-                    value={
-                      ((formData.annualSalary -
-                        formData.insurance -
-                        formData.gb -
-                        formData.fb -
-                        formData.pf) *
-                        0.4) /
-                      2
-                    }
-                    onChange={handleChange}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                  />
-                </Grid2>
-              </>
-            )}
+            <Grid2
+              container
+              rowSpacing={1}
+              mt={2}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            >
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Hr Name"
+                  name="hrName"
+                  value={formData.hrName}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+              {/* HR Designation */}
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="HR Designation"
+                  name="hrDesignation"
+                  value={formData.hrDesignation}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
 
-            <Grid2 item xs={4}>
-              <TextField
-                fullWidth
-                label="Upload Signature (Optional)"
-                name="signature"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-              />
+              {/* Job Title */}
+
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Reporting Manager"
+                  name="reportingManager"
+                  value={formData.reportingManager}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item size={12}>
+                <TextField
+                  fullWidth
+                  label="Reporting Manager Deisgnation"
+                  name="reportingManagerJobTitle"
+                  value={formData.reportingManagerJobTitle}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
             </Grid2>
-          </Grid2>
-          <Grid2 container mt={2} spacing={2}>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="showBonus"
-                    onChange={handleChange}
-                    checked={formData.showBonus}
-                  />
-                }
-                label="Guaranteed Bonus"
-              />
+            {/* Date of Joining */}
+
+            <Grid2 container mt={2} spacing={2}>
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Annual Salary"
+                  name="annualSalary"
+                  type="Number"
+                  value={formData.annualSalary}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+             {formData.country === "India" && (
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Insurance"
+                  name="insurance"
+                  type="Number"
+                  value={formData.insurance}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+             )}
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="PF"
+                  name="pf"
+                  type="Number"
+                  value={formData.pf}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Guaranteed Bonus"
+                  name="gb"
+                  type="Number"
+                  value={formData.gb}
+                  disabled={!formData.showBonus}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Joining Bonus"
+                  name="fb"
+                  type="Number"
+                  value={formData.fb}
+                  disabled={!formData.showJoiningBonus}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Performance Bonus"
+                  name="performanceBonus"
+                  type="Number"
+                  value={formData.performanceBonus}
+                  disabled={!formData.showPb}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Reloaction Alowance"
+                  name="relocation"
+                  type="Number"
+                  disabled={!formData.showRelocation}
+                  value={formData.relocation}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Incentive"
+                  name="incentive"
+                  type="Number"
+                  value={formData.incentive}
+                  disabled={!formData.showIncentive}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
             </Grid2>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="showJoiningBonus"
-                    onChange={handleChange}
-                    checked={formData.showJoiningBonus}
-                  />
-                }
-                label="Joining Bonus"
-              />
+            <Grid2 container mt={2} spacing={2}>
+              {formData.country === "India" && (
+                <>
+                  <Grid2 item xs={4}>
+                    <TextField
+                      fullWidth
+                      label="Basic Pay Amount"
+                      name="employeeBasicPay"
+                      type="Number"
+                      value={
+                        (formData.annualSalary -
+                          formData.insurance -
+                          formData.gb -
+                          formData.fb -
+                          formData.pf) *
+                        0.4
+                      }
+                      onChange={handleChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                    />
+                  </Grid2>
+                  <Grid2 item xs={4}>
+                    <TextField
+                      fullWidth
+                      label="HRA"
+                      name="hra"
+                      type="Number"
+                      value={
+                        ((formData.annualSalary -
+                          formData.insurance -
+                          formData.gb -
+                          formData.fb -
+                          formData.pf) *
+                          0.4) /
+                        2
+                      }
+                      onChange={handleChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      variant="outlined"
+                    />
+                  </Grid2>
+                </>
+              )}
+
+              <Grid2 item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Upload Signature (Optional)"
+                  name="signature"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                />
+              </Grid2>
             </Grid2>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="showPb"
-                    onChange={handleChange}
-                    checked={formData.showPb}
-                  />
-                }
-                label="Performance Bonus"
-              />
+            <Grid2 container mt={2} spacing={2}>
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showBonus"
+                      onChange={handleChange}
+                      checked={formData.showBonus}
+                    />
+                  }
+                  label="Guaranteed Bonus"
+                />
+                {formData.showBonus && (
+                  <Grid container mt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Guaranteed Bonus Description"
+                        name="guaranteedBonusDesc"
+                        multiline
+                        rows={3}
+                        value={formData.guaranteedBonusDesc}
+                        onChange={handleChangeDesc}
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <button
+                        type="button"
+                        onClick={() => handleSave("guaranteedBonusDesc")}
+                      >
+                        Save Guaranteed Bonus
+                      </button>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid2>
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showJoiningBonus"
+                      onChange={handleChange}
+                      checked={formData.showJoiningBonus}
+                    />
+                  }
+                  label="Joining Bonus"
+                />
+                {/* formData.selectedOption ===
+                  "showJoiningBonus" */}
+                {formData.showJoiningBonus && (
+                  <Grid container mt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Joining Bonus Description"
+                        name="joiningBonusDesc"
+                        multiline
+                        rows={3}
+                        value={formData.joiningBonusDesc}
+                        onChange={handleChangeDesc}
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <button
+                        type="button"
+                        onClick={() => handleSave("joiningBonusDesc")}
+                      >
+                        Save Joining Bonus
+                      </button>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid2>
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showPb"
+                      onChange={handleChange}
+                      checked={formData.showPb}
+                    />
+                  }
+                  label="Performance Bonus"
+                />
+                {/* formData.selectedOption === "showPb" && */}
+                {formData.showPb && (
+                  <Grid container mt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Performance Bonus Description"
+                        name="performanceBonusDesc"
+                        multiline
+                        rows={3}
+                        value={formData.performanceBonusDesc}
+                        onChange={handleChangeDesc}
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <button
+                        type="button"
+                        onClick={() => handleSave("performanceBonusDesc")}
+                      >
+                        Save Performance Bonus
+                      </button>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid2>
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showIncentive"
+                      onChange={handleChange}
+                      checked={formData.showIncentive}
+                    />
+                  }
+                  label="Incentive"
+                />
+                {formData.showIncentive && (
+                  <Grid container mt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Incentive Description"
+                        name="incentiveDesc"
+                        multiline
+                        rows={3}
+                        value={formData.incentiveDesc}
+                        onChange={handleChangeDesc}
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <button
+                        type="button"
+                        onClick={() => handleSave("incentiveDesc")}
+                      >
+                        Save Guaranteed Bonus
+                      </button>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid2>
+
+              <Grid2 item xs={4}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="showRelocation"
+                      onChange={handleChange}
+                      checked={formData.showRelocation}
+                    />
+                  }
+                  label="Relocation allowance"
+                />
+                {formData.showRelocation && (
+                  <Grid container mt={2} spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Relocation Description"
+                        name="relocationDesc"
+                        multiline
+                        rows={3}
+                        value={formData.relocationDesc}
+                        onChange={handleChangeDesc}
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <button
+                        type="button"
+                        onClick={() => handleSave("relocationDesc")}
+                      >
+                        Save Guaranteed Bonus
+                      </button>
+                    </Grid>
+                  </Grid>
+                )}
+              </Grid2>
             </Grid2>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="showIncentive"
-                    onChange={handleChange}
-                    checked={formData.showIncentive}
-                  />
-                }
-                label="Incentive"
-              />
-            </Grid2>
-            <Grid2 item xs={4}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="showRelocation"
-                    onChange={handleChange}
-                    checked={formData.showRelocation}
-                  />
-                }
-                label="Relocation allowance"
-              />
-            </Grid2>
-          </Grid2>
-        </form>
+          </form>
+        </div>
       </div>
       {formData.country === "India" && <UsofferLetter formData={formData} />}
       {formData.country === "USA" && <IndianOfferLetter formData={formData} />}
-      {/* {formData.country === "NZ" && <NzOfferLetter formData={formData} />} */}
+      {formData.country === "NZ" && <NzOfferLetter formData={formData} />}
       {/* Page 1 Content */}
     </div>
   );
