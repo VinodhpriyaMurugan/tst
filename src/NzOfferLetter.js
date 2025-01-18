@@ -24,10 +24,15 @@ const styles = {
     fontSize: "14px",
     color: "#555",
   },
+  ul:{
+    listStyleType: "none",
+    margin: "0",
+    padding: "0",
+    paddingLeft: "20px",
+  }
 };
 export default function NzOfferLetter({ formData }) {
   function formatIndianNumberingSystem(number) {
-    console.log("Formattin  number", number);
     let num = parseInt(number);
     return num.toLocaleString(formData.country === "India" ? "en-IN" : "en-US");
   }
@@ -224,7 +229,7 @@ export default function NzOfferLetter({ formData }) {
             or statement you made when applying for this position was true and
             complete; and
           </p>
-          <p >
+          <p>
             <span style={{ marginRight: "20px" }}>2.1.2</span> you disclosed to
             us every matter which might materially influence our decision to
             employ you.
@@ -236,6 +241,118 @@ export default function NzOfferLetter({ formData }) {
           employment in accordance with the provisions of this agreement dealing
           with termination for serious misconduct
         </p>
+        <div
+          style={{
+            padding: "20px",
+            fontFamily: "Arial, sans-serif",
+            lineHeight: "1.6",
+          }}
+        >
+          <h2>2. Essential Term</h2>
+          <p>
+            <strong>2.1</strong> It is an essential term of this agreement that:
+          </p>
+          <div style={{ paddingLeft: "20px" }}>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>2.1.1</span>
+              <span>
+                Any representation or statement you made when applying for this
+                position was true and complete; and
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>2.1.2</span>
+              <span>
+                You disclosed to us every matter which might materially
+                influence our decision to employ you.
+              </span>
+            </div>
+          </div>
+          <p>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>2.2</span>
+              <span>
+                If either of these conditions is not met, we may terminate the
+                employment in accordance with the provisions of this agreement
+                dealing with termination for serious misconduct.
+              </span>
+            </div>
+          </p>
+          <h2>3. Duties</h2>
+          <p>
+            Your duties are set out in the attached job description. In addition
+            to these duties, you agree to:
+          </p>
+          <div style={{ paddingLeft: "20px" }}>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>3.1.1</span>
+              <span>
+                Comply with any reasonable direction we give, our policies,
+                procedures, and rules, and all legal requirements.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>3.1.2</span>
+              <span>
+                Work exclusively for us and not have any interest in a business
+                that competes with us, or do anything that may result in a
+                conflict of interest.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>3.1.3</span>
+              <span>
+                Tell us about any business opportunity that we may be able to
+                take advantage of and do whatever we reasonably ask to take
+                advantage of that business opportunity.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>3.1.4</span>
+              <span>Protect our reputation and other business interests.</span>
+            </div>
+          </div>
+          <h2>4. Health and Safety</h2>
+          <p>
+            <strong>4.1</strong>
+          </p>
+          <div style={{ paddingLeft: "20px" }}>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>4.1</span>
+              <span>
+                We consider that it is a primary function of management to
+                provide a safe working environment for our employees, and we
+                will continue to take measures to safeguard your occupational
+                health and safety.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>4.2</span>
+              <span>
+                You understand that you have a responsibility to report in
+                writing any condition or practice which may have become unsafe,
+                in order that we can take appropriate and timely corrective
+                action. You also accept responsibility to report to us in
+                writing any condition or practice that you consider is or may be
+                adversely affecting you.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>4.3</span>
+              <span>
+                Please report to us as soon as practicable any accident or
+                injury, no matter how minor that occurs to you in the workplace.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>4.4</span>
+              <span>
+                You need to be aware that disregard of our health and safety
+                policies may result in disciplinary action.
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
       <div
         id="page-3"
@@ -258,65 +375,152 @@ export default function NzOfferLetter({ formData }) {
           textAlign: "justify",
         }}
       >
-        {(formData.showBonus || formData.showJoiningBonus) && (
-          <>
-            <h3>Probation and Confirmation</h3>
-            <p>
-              You will be on probation for a period of 6 (six) months from the
-              date of joining us. On successful completion of your probation,
-              you will be confirmed as a permanent employee of the company.
-              During this period, either party may terminate this contract by
-              giving forty-five (45) days’ notice in writing or salary in lieu
-              thereof, at the sole discretion of the Company. Within ten (10)
-              days after completion of 6 (six) months if you have not received a
-              notification stating otherwise including, without limitation,
-              extension of probation period from HR, your employment is deemed
-              to be confirmed.
-            </p>
-          </>
-        )}
-
+        <h2>5. Confidentiality</h2>
         <p>
-          After the expiry of the probation period or the extended probation
-          period (if the same has been extended) either party is entitled to
-          terminate the contract by giving Ninety (90) days’ notice. Whereas the
-          Company reserves the right to request service of notice or pay salary
-          in lieu of your notice period, waiver or payment in lieu will be at
-          the sole discretion of the Company, but in no event will be less than
-          the minimum period required by applicable law.
+          <strong>5.1</strong>You agree not to disclose any of our confidential
+          information except where:
         </p>
+        <div style={{ paddingLeft: "20px" }}>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.1.1</span>
+            <span>the disclosure is required by law</span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.1.2</span>
+            <span>
+              the disclosure is necessary in connection with performing
+              obligations under this agreement
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.1.3</span>
+            <span>
+              the disclosure is reasonably made to a professional legal adviser
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.1.4</span>
+            <span>we consent in writing to the disclosure.</span>
+          </div>
+        </div>
         <p>
-          For computing the probation period, your actual date of joining the
-          Company shall be taken into consideration. Leave You will be governed
-          by TSI India leave policy announced from time to time. Further details
-          will be provided to you at the time of joining. Notice period.
+          <strong>5.2</strong> You agree not to disclose any of our confidential
+          information except where:
         </p>
+        <p>What information is confidential?</p>
         <p>
-          In case of your resignation from the services of the Company, the
-          Company at its sole discretion shall have a right, but not an
-          obligation, to waive off the notice period and in such cases the
-          Company will not be liable to make any payment of salary to the
-          employee in lieu of the waived off notice period.
+          <strong>5.3</strong> Confidential information includes:
         </p>
-        <ol>
-          <li>
-            During notice period, leave will not be permitted except in case of
-            medical emergency. Payment in lieu of unserved notice period will be
-            recovered from the employee or notice period may get extended.
-          </li>
-          <li>
-            At the time of termination of your employment contract, you are
-            required to return to the Company in acceptable conditions all such
-            properties of the Company which are in your possession.
-          </li>
-          <li>
-            You agree that following the notice of termination of your
-            employment, you shall cooperate fully with the Company and to the
-            satisfaction of the Company in all matters relating to your 3
-            employment with the Company and the orderly transition of such work
-            to such other employees / persons as the Company may designate.
-          </li>
-        </ol>
+        <div style={{ paddingLeft: "20px" }}>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.1</span>
+            <span>
+              our trade secrets, know-how and technological information{" "}
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.2</span>
+            <span>our client and supplier lists</span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.3</span>
+            <span>information about our clients and suppliers</span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.4</span>
+            <span>
+              information about our administrative procedures and business
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.5</span>
+            <span>
+              our financial information - for example profit margins, costs and
+              prices
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.6</span>
+            <span>
+              information about our business strategies and identified business
+              opportunities
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.7</span>
+            <span>our intellectual property</span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.8</span>
+            <span>
+              information which, if disclosed, might cause harm to our business
+              or advantage a competitor
+            </span>
+          </div>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <span style={{ marginRight: "10px", flexShrink: 0 }}>5.3.9</span>
+            <span>
+              any other information which is confidential in fact or is regarded
+              by us as confidential.
+            </span>
+          </div>
+        </div>
+        <div
+          style={{
+            padding: "20px",
+            fontFamily: "Arial, sans-serif",
+            lineHeight: "1.6",
+            textAlign: "justify",
+          }}
+        >
+          <h2>6. Intellectual Property</h2>
+          <p>
+            <strong>6.1</strong> We own any intellectual property that you
+            discover, produce, or conceive which is related in any way to our
+            business (whether or not it can be patented, can be subject to
+            copyright, or can be protected in any other way). This includes
+            intellectual property discovered, produced, or conceived:
+          </p>
+          <div style={{ paddingLeft: "20px" }}>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>6.1.1</span>
+              <span>
+                While working for us (whether or not it is during office hours
+                or on the premises of us).
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>6.1.2</span>
+              <span>
+                After you have finished working for us, if it is based on
+                something you worked on or became aware of while employed by us.
+              </span>
+            </div>
+            <div style={{ display: "flex", marginBottom: "10px" }}>
+              <span style={{ marginRight: "10px", flexShrink: 0 }}>6.1.3</span>
+              <span>By using our confidential information.</span>
+            </div>
+          </div>
+          <p>
+            <strong>6.2</strong> You agree to promptly give us any assistance
+            and information we require to allow us to take any steps to protect
+            or enforce our intellectual property.
+          </p>
+          <p>
+            <strong>6.3</strong> You appoint us as your attorney to do anything
+            you are required to do under this clause.
+          </p>
+          <p>
+            <strong>6.4</strong> Intellectual property includes the property
+            rights to any information, data, discovery, improvement, design,
+            documentation, business method, computer programming method,
+            software, and other non-physical property.
+          </p>
+          <p>
+            <strong>6.5</strong> The obligations regarding intellectual property
+            continue to apply after the employment ends.
+          </p>
+        </div>
       </div>
       <div
         id="page-4"
@@ -334,142 +538,83 @@ export default function NzOfferLetter({ formData }) {
           textAlign: "justify",
         }}
       >
-        <h3>Termination without notice</h3>
-        <p>
-          At the sole discretion of the company your service is liable to be
-          terminated without any notice or salary in lieu thereof in the event
-          of your involvement in any serious misconduct, nonappearance to work
-          without any communication, misdemeanour or any offense which may or
-          may not be directly connected with the business of the company. Other
-          terms and conditions
-        </p>
-        <ul>
-          <li>
-            <p>
-              During your employment, you will be subject to the service rules,
-              regulations, and policy of the company applicable from time to
-              time.
-            </p>
-          </li>
-          <li>
-            <p>
-              The Company may, at its discretion conduct background checks prior
-              to or after your expected joining date to validate your identity,
-              the address provided by you, your education details, and details
-              of your prior work experience if any, and to conduct any criminal
-              checks. You expressly consent to the Company conducting such
-              background checks. This offer will be cancelled and your
-              employment with the company will be terminated with immediate
-              effect, if any of the information provided by you is found to be
-              false or misleading in the final background check report.
-            </p>
-          </li>
-        </ul>
-
-        <p>We certainly hope that you will be pleased with the foregoing.</p>
-        <p>
-          If you wish to accept this offer of employment with the Company, you
-          must sign and return all the attached documents by no later than 07.00
-          p.m. IST, {moment(formData.expiryDate).format("MMMM DD YYYY")}
-        </p>
-        <p>
-          Please feel free to contact Jaishree Vignesh
-          (jaishree.vignesh@tpfsoftware.com) if you have any questions or
-          concerns.
-        </p>
-        <p>
-          I accept this offer of employment and acknowledge that all the
-          information I have provided in relation to my application for
-          employment and capacity to undertake the role is true and correct and
-          I understand that if I have provided any false or misleading
-          information, TPF Software India Private Limited has the right to
-          terminate the employment. I acknowledge that I have read and
-          understood each term and condition set out in this appointment letter
-          &amp; the enclosed Annexure and hereby agree, accept, and undertake to
-          abide by all the aforesaid terms and conditions.
-        </p>
-
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "20px 40px",
-            // border: "1px solid #ccc",
+            padding: "20px",
+            fontFamily: "Arial, sans-serif",
+            lineHeight: "1.6",
+            textAlign: "justify",
           }}
         >
-          {/* Left Side */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              padding: "20px",
-              width: "100%",
-              // border: "1px solid #ccc",
-            }}
-          >
-            {/* Left Side */}
-            <div style={{ textAlign: "left" }}>
-              <p style={{ margin: "5px 0" }}>
-                <strong>Accepted by</strong>
-              </p>
-              <p style={{ margin: "5px 0" }}>
-                <strong>
-                  Name:{formData.firstName} {formData.lastName}
-                </strong>{" "}
-              </p>
-              <p style={{ margin: "5px 0" }}>
-                <span style={{ textDecoration: "underline" }}>
-                  {formData.employeeName}
-                </span>
-              </p>
-              <p style={{ margin: "5px 0" }}>
-                <strong>Date:</strong>
-              </p>
-              <p style={{ margin: "5px 0" }}>
-                <span style={{ textDecoration: "underline" }}>
-                  ____________________
-                </span>
-              </p>
-            </div>
+          <h2>7. Remuneration, Hours of Work, and Leave</h2>
 
-            {/* Right Side */}
-            <div style={{ textAlign: "right" }}>
-              <div
-                style={{
-                  margin: "auto",
-                  height: "60px",
-                  width: "260px",
-                }}
-              >
-                {/* Dynamic Signature */}
-                {formData.signature ? (
-                  <img
-                    src={URL.createObjectURL(formData.signature)}
-                    alt="Signature"
-                    style={{ width: "15vw", height: "100%" }}
-                  />
-                ) : (
-                  <span style={{ color: "#ccc" }}>Signature</span>
-                )}
-              </div>
-              <p style={{ margin: "5px 0" }}>
-                <strong>
-                  {formData.hrName} - {formData.hrDesignation}
-                </strong>
-              </p>
-              <p style={{ margin: "5px 0" }}>
-                <strong>Date:</strong>{" "}
-                <span>{moment(new Date()).format("MMMM DD, YYYY")}</span>
-              </p>
-              <img
-                src={seal}
-                alt="Signature"
-                style={{ maxHeight: "100%", maxWidth: "100%" }}
-              />
-            </div>
-          </div>
+          <h3>Total Remuneration Package</h3>
+          <p>
+            <strong>7.1</strong> We operate a Total Remuneration Package system.
+            Your Total Remuneration Package is calculated on a combination of
+            benefits, salary, and, if applicable, compulsory employer
+            superannuation contributions to any KiwiSaver scheme or complying
+            superannuation fund to which you belong either at the time you
+            commence employment with us, or at any later date. The Total
+            Remuneration Package for your position is specified in Schedule 1.
+          </p>
+          <p>
+            <strong>7.2</strong> You agree that your Total Remuneration Package
+            as specified in Schedule 1 includes all compulsory employer
+            contributions to your KiwiSaver or other complying superannuation
+            fund account, if applicable. You agree that this clause has been
+            negotiated in good faith and complies with section 101B (4) of the
+            KiwiSaver Act 2006.
+          </p>
+          <p>
+            <strong>7.3</strong> Your salary may increase or reduce according to
+            what benefits you and we agree you will receive, and whether you are
+            or become or cease to be a KiwiSaver or complying superannuation
+            fund member.
+          </p>
+          <p>
+            <strong>7.4</strong> Your salary will be paid monthly via direct
+            credit to your nominated bank account, with payments made on the
+            last working day of each month. The duties of your position may
+            require you to work hours additional to the standard hours of work.
+            Your Total Remuneration is in full consideration of the requirements
+            of your position in respect of hours and times of employment.
+          </p>
+          <p>
+            <strong>7.5</strong> We will review your Total Remuneration package
+            annually. Reviews will not necessarily result in an increase.
+          </p>
+          <p>
+            <strong>7.6</strong> Please keep the information about your
+            remuneration confidential.
+          </p>
+          <p>
+            <strong>7.7</strong> The duties of your position may require you to
+            work hours additional to the standard hours of work. Because your
+            position is salaried, no additional payment will be made for those
+            additional hours.
+          </p>
+
+          <h3>Hours of Work</h3>
+          <p>
+            <strong>7.8</strong> Your standard hours of work are recorded in
+            Schedule 1. You will be entitled to (paid) rest and (unpaid) meal
+            breaks in accordance with the Employment Relations Act 2000.
+          </p>
+
+          <h3>Deductions</h3>
+          <p>
+            <strong>7.9</strong> You authorize us to make deductions from your
+            wages or holiday pay for any money you owe us and to make a ratable
+            deduction from your salary for any time you are absent from work for
+            other than periods of authorized paid leave.
+          </p>
+
+          <h3>Expenses</h3>
+          <p>
+            <strong>7.10</strong> We will reimburse you for reasonable business
+            expenses specifically authorized by us in writing.
+          </p>
         </div>
       </div>
       <div
@@ -488,25 +633,7 @@ export default function NzOfferLetter({ formData }) {
           textAlign: "justify",
         }}
       >
-        <div style={{ margin: "20px", fontFamily: "Arial, sans-serif" }}>
-          <h3 style={{ textAlign: "center" }}>Annexure - 1</h3>
-
-          <h6
-            style={{
-              width: "100%",
-              textAlign: "center",
-              marginTop: "20px",
-            }}
-          >
-            *** applicable only for the first year of employment
-          </h6>
-          <p>
-            Note: The salary structure provided in Annexure-I is subject to
-            change based on the insurance premium, FBP declaration, tax regime,
-            and investment proof. Please note that the insurance premium is
-            subject to change based on the annual insurance renewal.
-          </p>
-        </div>
+   
       </div>
       <div
         id="page-6"
